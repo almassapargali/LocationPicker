@@ -9,7 +9,6 @@
 import UIKit
 import MapKit
 import CoreLocation
-import AddressBookUI
 
 public class MapViewController: UIViewController {
 	public var completion: (Location? -> ())?
@@ -19,12 +18,15 @@ public class MapViewController: UIViewController {
 		didSet {
 			if let location = location {
 				searchBar.text = location.name
+			} else {
+				searchBar.text = ""
 			}
 		}
 	}
 	
 	static let SearchTermKey = "SearchTermKey"
 	
+	let geocoder = CLGeocoder()
 	var localSearch: MKLocalSearch?
 	var searchTimer: NSTimer?
 	
@@ -32,7 +34,7 @@ public class MapViewController: UIViewController {
 	
 	lazy var results: LocationSearchResultsViewController = {
 		let results = LocationSearchResultsViewController()
-		results.onSelectLocation = { self.selectedLocation($0) }
+		results.onSelectLocation = { [weak self] in self?.selectedLocation($0) }
 		return results
 	}()
 	
@@ -53,6 +55,7 @@ public class MapViewController: UIViewController {
 	deinit {
 		searchTimer?.invalidate()
 		localSearch?.cancel()
+		geocoder.cancelGeocode()
 	}
 	
 	override public func loadView() {
@@ -65,9 +68,18 @@ public class MapViewController: UIViewController {
 		
 		mapView.delegate = self
 		
+		// gesture recognizer for adding by tap
+		mapView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: "addLocation:"))
+		
 		// search
 		navigationItem.titleView = searchBar
 		definesPresentationContext = true
+	}
+	
+	func cleanAnnotations() {
+		if let annotations = mapView.annotations {
+			mapView.removeAnnotations(annotations)
+		}
 	}
 }
 
@@ -100,24 +112,18 @@ extension MapViewController: UISearchResultsUpdating {
 		}
 	}
 	
-	func showItemsForSearchResult(searchResult :MKLocalSearchResponse?) {
-		var locations: [Location] = []
+	func showItemsForSearchResult(searchResult: MKLocalSearchResponse?) {
+		let locations: [Location]
 		if let response = searchResult, let mapItems = response.mapItems as? [MKMapItem] {
-			locations = map(mapItems) { mapItem in
-				let place = mapItem.placemark
-				let address = ABCreateStringWithAddressDictionary(place.addressDictionary, true)
-				return Location(name: mapItem.name , address: address, coordinates: place.location)
-			}
-		}
+			locations = map(mapItems) { Location(name: $0.name, placemark: $0.placemark) }
+		} else { locations = [] }
 		self.results.locations = locations
 		self.results.tableView.reloadData()
 	}
 	
 	func selectedLocation(location: Location) {
-		// remove old location
-		if let location = self.location {
-			mapView.removeAnnotation(location)
-		}
+		// remove old locations
+		cleanAnnotations()
 		
 		self.location = location
 		
@@ -130,6 +136,39 @@ extension MapViewController: UISearchResultsUpdating {
 			
 			// add annotation
 			self.mapView.addAnnotation(location)
+		}
+	}
+}
+
+// MARK: Selecting location with gesture
+
+extension MapViewController {
+	func addLocation(gestureRecognizer: UIGestureRecognizer) {
+		if gestureRecognizer.state == .Began {
+			let point = gestureRecognizer.locationInView(mapView)
+			let coordinates = mapView.convertPoint(point, toCoordinateFromView: mapView)
+			let location = CLLocation(latitude: coordinates.latitude, longitude: coordinates.longitude)
+			
+			// remove current location
+			cleanAnnotations()
+			
+			// add annotation to map
+			let annotation = MKPointAnnotation()
+			annotation.coordinate = coordinates
+			mapView.addAnnotation(annotation)
+			
+			geocoder.cancelGeocode()
+			geocoder.reverseGeocodeLocation(location) { response, error in
+				let placemark = (response as? [CLPlacemark])?.first
+				if let placemark = placemark {
+					// get POI name from placemark if any
+					let name = (placemark.areasOfInterest as? [String])?.first
+					self.location = Location(name: name, placemark: placemark)
+					
+					// set annotatio title
+					annotation.title = self.location!.title
+				}
+			}
 		}
 	}
 }
