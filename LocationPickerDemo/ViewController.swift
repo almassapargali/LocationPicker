@@ -20,6 +20,11 @@ class ViewController: UIViewController {
 		super.viewDidAppear(animated)
 		
 		let locationPicker = MapViewController()
+		locationPicker.completion = { location in
+			if let location = location {
+				println(location.name)
+			}
+		}
 		navigationController?.pushViewController(locationPicker, animated: true)
 	}
 
@@ -27,7 +32,5 @@ class ViewController: UIViewController {
 		super.didReceiveMemoryWarning()
 		// Dispose of any resources that can be recreated.
 	}
-
-
 }
 

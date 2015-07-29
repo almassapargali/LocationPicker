@@ -58,12 +58,12 @@ public class MapViewController: UIViewController {
 		geocoder.cancelGeocode()
 	}
 	
-	override public func loadView() {
+	public override func loadView() {
 		mapView = MKMapView(frame: UIScreen.mainScreen().bounds)
 		view = mapView
 	}
 	
-	override public func viewDidLoad() {
+	public override func viewDidLoad() {
 		super.viewDidLoad()
 		
 		mapView.delegate = self
@@ -74,6 +74,14 @@ public class MapViewController: UIViewController {
 		// search
 		navigationItem.titleView = searchBar
 		definesPresentationContext = true
+	}
+	
+	public override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+		
+		if (isMovingFromParentViewController() || isBeingDismissed()) {
+			completion?(location)
+		}
 	}
 	
 	func cleanAnnotations() {
