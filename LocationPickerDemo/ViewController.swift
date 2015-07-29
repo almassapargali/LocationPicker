@@ -8,6 +8,7 @@
 
 import UIKit
 import LocationPicker
+import CoreLocation
 
 class ViewController: UIViewController {
 	@IBOutlet weak var locationNameLabel: UILabel!
@@ -18,9 +19,9 @@ class ViewController: UIViewController {
 			let locationPicker = segue.destinationViewController as! LocationPickerViewController
 			locationPicker.location = location
 			
-			locationPicker.completion = { [weak self] location in
-				self?.location = location
-				self?.locationNameLabel.text = flatMap(location, { $0.title }) ?? "No location selected"
+			locationPicker.completion = { location in
+				self.location = location
+				self.locationNameLabel.text = flatMap(location, { $0.title }) ?? "No location selected"
 			}
 		}
 	}
