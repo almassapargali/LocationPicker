@@ -9,12 +9,11 @@
 import Foundation
 
 import CoreLocation
-import MapKit
 import AddressBookUI
 
 // class because protocol
 public class Location: NSObject {
-	public let name: String
+	public let name: String?
 	public let placemark: CLPlacemark
 	
 	var address: String {
@@ -22,10 +21,12 @@ public class Location: NSObject {
 	}
 	
 	init(name: String?, placemark: CLPlacemark) {
-		self.name = name ?? ABCreateStringWithAddressDictionary(placemark.addressDictionary, true)
+		self.name = name
 		self.placemark = placemark
 	}
 }
+
+import MapKit
 
 extension Location: MKAnnotation {
     @objc public var coordinate: CLLocationCoordinate2D {
@@ -33,6 +34,6 @@ extension Location: MKAnnotation {
 	}
 	
     public var title: String {
-		return name
+		return name ?? address
 	}
 }
