@@ -16,8 +16,10 @@ public class LocationPickerViewController: UIViewController {
 	
 	public var location: Location? {
 		didSet {
-			searchBar.text = flatMap(location, { $0.title }) ?? ""
-			updateAnnotation()
+			if isViewLoaded() {
+				searchBar.text = flatMap(location, { $0.title }) ?? ""
+				updateAnnotation()
+			}
 		}
 	}
 	
@@ -72,6 +74,12 @@ public class LocationPickerViewController: UIViewController {
 		// search
 		navigationItem.titleView = searchBar
 		definesPresentationContext = true
+		
+		if let location = location {
+			// present initial location if any
+			self.location = location
+			showSelectedLocation()
+		}
 	}
 	
 	public override func viewWillDisappear(animated: Bool) {
@@ -109,6 +117,15 @@ public class LocationPickerViewController: UIViewController {
 	func cleanAnnotations() {
 		if let annotations = mapView.annotations {
 			mapView.removeAnnotations(annotations)
+		}
+	}
+	
+	func showSelectedLocation() {
+		if let location = location {
+			// change review to center result location
+			let region = MKCoordinateRegionMakeWithDistance(location.coordinate,
+				resultRegionDistance, resultRegionDistance)
+			mapView.setRegion(region, animated: true)
 		}
 	}
 }
@@ -154,14 +171,9 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 	func selectedLocation(location: Location) {
 		// dismiss search results
 		dismissViewControllerAnimated(true) {
-			
-			// change review to center result location
-			let region = MKCoordinateRegionMakeWithDistance(location.coordinate,
-				self.resultRegionDistance, self.resultRegionDistance)
-			self.mapView.setRegion(region, animated: true)
-			
 			// set location, this also adds annotation
 			self.location = location
+			self.showSelectedLocation()
 		}
 	}
 }
