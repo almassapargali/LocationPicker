@@ -361,6 +361,7 @@
 				B62462F11B68A4BC00646DE2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
