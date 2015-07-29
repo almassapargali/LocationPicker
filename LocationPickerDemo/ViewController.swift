@@ -14,7 +14,7 @@ class ViewController: UIViewController {
 	
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier == "LocationPicker" {
-			let locationPicker = segue.destinationViewController as! MapViewController
+			let locationPicker = segue.destinationViewController as! LocationPickerViewController
 			locationPicker.completion = { [weak self] location in
 				self?.locationNameLabel.text = flatMap(location, { $0.title }) ?? "No location selected"
 			}

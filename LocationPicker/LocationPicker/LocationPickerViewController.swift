@@ -1,5 +1,5 @@
 //
-//  MapViewController.swift
+//  LocationPickerViewController.swift
 //  LocationPicker
 //
 //  Created by Almas Sapargali on 7/29/15.
@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 import CoreLocation
 
-public class MapViewController: UIViewController {
+public class LocationPickerViewController: UIViewController {
 	public var completion: (Location? -> ())?
 	lazy var resultRegionDistance: CLLocationDistance = 600
 	
@@ -115,7 +115,7 @@ public class MapViewController: UIViewController {
 
 // MARK: Searching
 
-extension MapViewController: UISearchResultsUpdating {
+extension LocationPickerViewController: UISearchResultsUpdating {
 	public func updateSearchResultsForSearchController(searchController: UISearchController) {
 		searchTimer?.invalidate()
 		
@@ -124,13 +124,13 @@ extension MapViewController: UISearchResultsUpdating {
 		
 		searchTimer = NSTimer.scheduledTimerWithTimeInterval(0.2,
 			target: self, selector: "searchFromTimer:",
-			userInfo: [MapViewController.SearchTermKey: searchController.searchBar.text],
+			userInfo: [LocationPickerViewController.SearchTermKey: searchController.searchBar.text],
 			repeats: false)
 	}
 	
 	func searchFromTimer(timer: NSTimer) {
 		if let userInfo = timer.userInfo as? [String: AnyObject],
-			let term = userInfo[MapViewController.SearchTermKey] as? String {
+			let term = userInfo[LocationPickerViewController.SearchTermKey] as? String {
 				let request = MKLocalSearchRequest()
 				request.naturalLanguageQuery = term
 				
@@ -168,7 +168,7 @@ extension MapViewController: UISearchResultsUpdating {
 
 // MARK: Selecting location with gesture
 
-extension MapViewController {
+extension LocationPickerViewController {
 	func addLocation(gestureRecognizer: UIGestureRecognizer) {
 		if gestureRecognizer.state == .Began {
 			let point = gestureRecognizer.locationInView(mapView)
@@ -206,7 +206,7 @@ extension MapViewController {
 
 // MARK: MKMapViewDelegate
 
-extension MapViewController: MKMapViewDelegate {
+extension LocationPickerViewController: MKMapViewDelegate {
 	public func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
 		let pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "annotation")
 		pin.pinColor = .Green
@@ -224,7 +224,7 @@ extension MapViewController: MKMapViewDelegate {
 
 // MARK: UISearchBarDelegate
 
-extension MapViewController: UISearchBarDelegate {
+extension LocationPickerViewController: UISearchBarDelegate {
 	public func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
 		// remove location if user presses clear or removes text
 		if searchText.isEmpty {

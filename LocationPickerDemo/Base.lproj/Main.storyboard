@@ -57,10 +57,10 @@
             </objects>
             <point key="canvasLocation" x="1057" y="306"/>
         </scene>
-        <!--Map View Controller-->
+        <!--Location Picker View Controller-->
         <scene sceneID="kgk-r3-CGe">
             <objects>
-                <viewController id="6yk-tj-9ye" customClass="MapViewController" customModule="LocationPicker" sceneMemberID="viewController">
+                <viewController id="6yk-tj-9ye" customClass="LocationPickerViewController" customModule="LocationPicker" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="1RZ-F5-oIB"/>
                         <viewControllerLayoutGuide type="bottom" id="zgc-bj-AVo"/>
