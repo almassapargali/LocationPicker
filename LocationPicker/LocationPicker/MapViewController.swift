@@ -13,27 +13,26 @@ import AddressBookUI
 
 public class MapViewController: UIViewController {
 	public var completion: (Location? -> ())?
+	lazy var resultRegionDistance: CLLocationDistance = 600
+	
 	public var location: Location? {
 		didSet {
 			if let location = location {
-				searchBar.placeholder = location.name
+				searchBar.text = location.name
 			}
 		}
 	}
 	
 	static let SearchTermKey = "SearchTermKey"
+	
+	var localSearch: MKLocalSearch?
 	var searchTimer: NSTimer?
-	let geocoder = CLGeocoder()
 	
 	var mapView: MKMapView!
 	
 	lazy var results: LocationSearchResultsViewController = {
 		let results = LocationSearchResultsViewController()
-		results.onSelectLocation = { location in
-			self.location = location
-			self.searchBar.text = nil
-			self.dismissViewControllerAnimated(true, completion: nil)
-		}
+		results.onSelectLocation = { self.selectedLocation($0) }
 		return results
 	}()
 	
@@ -53,6 +52,7 @@ public class MapViewController: UIViewController {
 	
 	deinit {
 		searchTimer?.invalidate()
+		localSearch?.cancel()
 	}
 	
 	override public func loadView() {
@@ -63,43 +63,85 @@ public class MapViewController: UIViewController {
 	override public func viewDidLoad() {
 		super.viewDidLoad()
 		
+		mapView.delegate = self
+		
 		// search
 		navigationItem.titleView = searchBar
 		definesPresentationContext = true
 	}
-	
-	func searchFromTimer(timer: NSTimer) {
-		if let userInfo = timer.userInfo as? [String: String],
-			let term = userInfo[MapViewController.SearchTermKey] {
-				geocoder.cancelGeocode()
-				
-				geocoder.geocodeAddressString(term) { result, error in
-					if let places = result as? [CLPlacemark] {
-						self.results.locations = map(places) { place in
-							let name = (place.areasOfInterest as? [String])?.first
-							let address = ABCreateStringWithAddressDictionary(place.addressDictionary, true)
-							return Location(name: name ?? address, address: address, coordinates: place.location)
-						}
-						self.results.tableView.reloadData()
-					}
-				}
-		}
-	}
-	
-	public struct Location {
-		public let name: String
-		public let address: String
-		public let coordinates: CLLocation
-	}
 }
+
+// MARK: Searching
 
 extension MapViewController: UISearchResultsUpdating {
 	public func updateSearchResultsForSearchController(searchController: UISearchController) {
 		searchTimer?.invalidate()
-		searchTimer = NSTimer.scheduledTimerWithTimeInterval(0.5,
-			target: self,
-			selector: "searchFromTimer:",
+		
+		// clear old results
+		showItemsForSearchResult(nil)
+		
+		searchTimer = NSTimer.scheduledTimerWithTimeInterval(0.2,
+			target: self, selector: "searchFromTimer:",
 			userInfo: [MapViewController.SearchTermKey: searchController.searchBar.text],
 			repeats: false)
+	}
+	
+	func searchFromTimer(timer: NSTimer) {
+		if let userInfo = timer.userInfo as? [String: AnyObject],
+			let term = userInfo[MapViewController.SearchTermKey] as? String {
+				let request = MKLocalSearchRequest()
+				request.naturalLanguageQuery = term
+				
+				localSearch?.cancel()
+				localSearch = MKLocalSearch(request: request)
+				localSearch!.startWithCompletionHandler { response, error in
+					self.showItemsForSearchResult(response)
+				}
+		}
+	}
+	
+	func showItemsForSearchResult(searchResult :MKLocalSearchResponse?) {
+		var locations: [Location] = []
+		if let response = searchResult, let mapItems = response.mapItems as? [MKMapItem] {
+			locations = map(mapItems) { mapItem in
+				let place = mapItem.placemark
+				let address = ABCreateStringWithAddressDictionary(place.addressDictionary, true)
+				return Location(name: mapItem.name , address: address, coordinates: place.location)
+			}
+		}
+		self.results.locations = locations
+		self.results.tableView.reloadData()
+	}
+	
+	func selectedLocation(location: Location) {
+		// remove old location
+		if let location = self.location {
+			mapView.removeAnnotation(location)
+		}
+		
+		self.location = location
+		
+		// dismiss search results
+		dismissViewControllerAnimated(true) {
+			// change review to center result location
+			let region = MKCoordinateRegionMakeWithDistance(location.coordinate,
+				self.resultRegionDistance, self.resultRegionDistance)
+			self.mapView.setRegion(region, animated: true)
+			
+			// add annotation
+			self.mapView.addAnnotation(location)
+		}
+	}
+}
+
+// MARK: MKMapViewDelegate
+
+extension MapViewController: MKMapViewDelegate {
+	public func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+		let pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "annotation")
+		pin.pinColor = .Green
+		pin.animatesDrop = true
+		pin.canShowCallout = true
+		return pin
 	}
 }

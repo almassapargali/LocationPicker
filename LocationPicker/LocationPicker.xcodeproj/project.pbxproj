@@ -10,6 +10,7 @@
 		B62463051B68A4DE00646DE2 /* LocationPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = B62463041B68A4DE00646DE2 /* LocationPicker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B62463251B68A56D00646DE2 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62463241B68A56D00646DE2 /* MapViewController.swift */; };
 		B624632C1B68A90900646DE2 /* LocationSearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B624632B1B68A90900646DE2 /* LocationSearchResultsViewController.swift */; };
+		B624632E1B68E25D00646DE2 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = B624632D1B68E25D00646DE2 /* Location.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -18,6 +19,7 @@
 		B62463041B68A4DE00646DE2 /* LocationPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocationPicker.h; sourceTree = "<group>"; };
 		B62463241B68A56D00646DE2 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		B624632B1B68A90900646DE2 /* LocationSearchResultsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationSearchResultsViewController.swift; sourceTree = "<group>"; };
+		B624632D1B68E25D00646DE2 /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +55,7 @@
 				B62463041B68A4DE00646DE2 /* LocationPicker.h */,
 				B62463241B68A56D00646DE2 /* MapViewController.swift */,
 				B624632B1B68A90900646DE2 /* LocationSearchResultsViewController.swift */,
+				B624632D1B68E25D00646DE2 /* Location.swift */,
 				B62463021B68A4DE00646DE2 /* Supporting Files */,
 			);
 			path = LocationPicker;
@@ -145,6 +148,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B624632C1B68A90900646DE2 /* LocationSearchResultsViewController.swift in Sources */,
+				B624632E1B68E25D00646DE2 /* Location.swift in Sources */,
 				B62463251B68A56D00646DE2 /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

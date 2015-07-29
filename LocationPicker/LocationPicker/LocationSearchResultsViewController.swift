@@ -10,8 +10,8 @@ import UIKit
 import MapKit
 
 class LocationSearchResultsViewController: UITableViewController {
-	var locations: [MapViewController.Location] = []
-	var onSelectLocation: (MapViewController.Location -> ())?
+	var locations: [Location] = []
+	var onSelectLocation: (Location -> ())?
 
 	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return locations.count
