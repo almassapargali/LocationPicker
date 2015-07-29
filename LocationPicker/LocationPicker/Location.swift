@@ -34,7 +34,7 @@ public class Location: NSObject {
 		}
 	}
 	
-	init(name: String?, location: CLLocation? = nil, placemark: CLPlacemark) {
+	public init(name: String?, location: CLLocation? = nil, placemark: CLPlacemark) {
 		self.name = name
 		self.location = location ?? placemark.location
 		self.placemark = placemark
