@@ -67,6 +67,7 @@ public class MapViewController: UIViewController {
 		super.viewDidLoad()
 		
 		mapView.delegate = self
+		searchBar.delegate = self
 		
 		// gesture recognizer for adding by tap
 		mapView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: "addLocation:"))
@@ -190,5 +191,15 @@ extension MapViewController: MKMapViewDelegate {
 		pin.animatesDrop = true
 		pin.canShowCallout = true
 		return pin
+	}
+}
+
+// MARK: UISearchBarDelegate
+
+extension MapViewController: UISearchBarDelegate {
+	public func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+		if searchText == "" {
+			location = nil
+		}
 	}
 }
