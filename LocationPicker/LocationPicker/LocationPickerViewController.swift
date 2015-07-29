@@ -12,7 +12,7 @@ import CoreLocation
 
 public class LocationPickerViewController: UIViewController {
 	public var completion: (Location? -> ())?
-	lazy var resultRegionDistance: CLLocationDistance = 600
+	lazy public var resultRegionDistance: CLLocationDistance = 600
 	
 	public var location: Location? {
 		didSet {
