@@ -7,26 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B60F275D1B69508200409BAE /* LocationPicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B60F275C1B69507100409BAE /* LocationPicker.framework */; };
+		B60F275E1B69508200409BAE /* LocationPicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B60F275C1B69507100409BAE /* LocationPicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B62462D61B68A4BC00646DE2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62462D51B68A4BC00646DE2 /* AppDelegate.swift */; };
 		B62462D81B68A4BC00646DE2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62462D71B68A4BC00646DE2 /* ViewController.swift */; };
 		B62462DB1B68A4BC00646DE2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B62462D91B68A4BC00646DE2 /* Main.storyboard */; };
 		B62462DD1B68A4BC00646DE2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B62462DC1B68A4BC00646DE2 /* Images.xcassets */; };
 		B62462E01B68A4BC00646DE2 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B62462DE1B68A4BC00646DE2 /* LaunchScreen.xib */; };
-		B62463261B68A7FE00646DE2 /* LocationPicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B62463211B68A4DF00646DE2 /* LocationPicker.framework */; };
-		B62463271B68A7FE00646DE2 /* LocationPicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B62463211B68A4DF00646DE2 /* LocationPicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B62463201B68A4DF00646DE2 /* PBXContainerItemProxy */ = {
+		B60F275B1B69507100409BAE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B624631B1B68A4DE00646DE2 /* LocationPicker.xcodeproj */;
+			containerPortal = B60F27571B69507000409BAE /* LocationPicker.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = B62462FF1B68A4DE00646DE2;
 			remoteInfo = LocationPicker;
 		};
-		B62463281B68A7FE00646DE2 /* PBXContainerItemProxy */ = {
+		B60F275F1B69508200409BAE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B624631B1B68A4DE00646DE2 /* LocationPicker.xcodeproj */;
+			containerPortal = B60F27571B69507000409BAE /* LocationPicker.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = B62462FE1B68A4DE00646DE2;
 			remoteInfo = LocationPicker;
@@ -40,7 +40,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B62463271B68A7FE00646DE2 /* LocationPicker.framework in Embed Frameworks */,
+				B60F275E1B69508200409BAE /* LocationPicker.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -48,6 +48,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B60F27571B69507000409BAE /* LocationPicker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LocationPicker.xcodeproj; path = ../LocationPicker.xcodeproj; sourceTree = "<group>"; };
 		B62462D01B68A4BC00646DE2 /* LocationPickerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocationPickerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B62462D41B68A4BC00646DE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B62462D51B68A4BC00646DE2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -55,7 +56,6 @@
 		B62462DA1B68A4BC00646DE2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B62462DC1B68A4BC00646DE2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		B62462DF1B68A4BC00646DE2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		B624631B1B68A4DE00646DE2 /* LocationPicker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LocationPicker.xcodeproj; path = LocationPicker/LocationPicker.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,17 +63,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B62463261B68A7FE00646DE2 /* LocationPicker.framework in Frameworks */,
+				B60F275D1B69508200409BAE /* LocationPicker.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B60F27581B69507000409BAE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B60F275C1B69507100409BAE /* LocationPicker.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		B62462C71B68A4BC00646DE2 = {
 			isa = PBXGroup;
 			children = (
-				B624631B1B68A4DE00646DE2 /* LocationPicker.xcodeproj */,
+				B60F27571B69507000409BAE /* LocationPicker.xcodeproj */,
 				B62462D21B68A4BC00646DE2 /* LocationPickerDemo */,
 				B62462D11B68A4BC00646DE2 /* Products */,
 			);
@@ -108,14 +116,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		B624631C1B68A4DE00646DE2 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B62463211B68A4DF00646DE2 /* LocationPicker.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -131,7 +131,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B62463291B68A7FE00646DE2 /* PBXTargetDependency */,
+				B60F27601B69508200409BAE /* PBXTargetDependency */,
 			);
 			name = LocationPickerDemo;
 			productName = LocationPickerDemo;
@@ -165,8 +165,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = B624631C1B68A4DE00646DE2 /* Products */;
-					ProjectRef = B624631B1B68A4DE00646DE2 /* LocationPicker.xcodeproj */;
+					ProductGroup = B60F27581B69507000409BAE /* Products */;
+					ProjectRef = B60F27571B69507000409BAE /* LocationPicker.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -177,11 +177,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B62463211B68A4DF00646DE2 /* LocationPicker.framework */ = {
+		B60F275C1B69507100409BAE /* LocationPicker.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = LocationPicker.framework;
-			remoteRef = B62463201B68A4DF00646DE2 /* PBXContainerItemProxy */;
+			remoteRef = B60F275B1B69507100409BAE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -212,10 +212,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B62463291B68A7FE00646DE2 /* PBXTargetDependency */ = {
+		B60F27601B69508200409BAE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = LocationPicker;
-			targetProxy = B62463281B68A7FE00646DE2 /* PBXContainerItemProxy */;
+			targetProxy = B60F275F1B69508200409BAE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
