@@ -22,11 +22,15 @@ public class Location: NSObject {
 	
 	var address: String {
 		// try to build full address first
-		if let lines = placemark.addressDictionary["FormattedAddressLines"] as? [String] {
-			return join(", ", lines)
+		if let addressDic = placemark.addressDictionary {
+			if let lines = addressDic["FormattedAddressLines"] as? [String] {
+				return join(", ", lines)
+			} else {
+				// fallback
+				return ABCreateStringWithAddressDictionary(addressDic, true)
+			}
 		} else {
-			// fallback
-			return ABCreateStringWithAddressDictionary(placemark.addressDictionary, true)
+			return "\(coordinate.latitude), \(coordinate.longitude)"
 		}
 	}
 	
