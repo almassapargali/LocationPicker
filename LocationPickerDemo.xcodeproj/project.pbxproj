@@ -12,6 +12,8 @@
 		B62462DB1B68A4BC00646DE2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B62462D91B68A4BC00646DE2 /* Main.storyboard */; };
 		B62462DD1B68A4BC00646DE2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B62462DC1B68A4BC00646DE2 /* Images.xcassets */; };
 		B62462E01B68A4BC00646DE2 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B62462DE1B68A4BC00646DE2 /* LaunchScreen.xib */; };
+		B62463261B68A7FE00646DE2 /* LocationPicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B62463211B68A4DF00646DE2 /* LocationPicker.framework */; };
+		B62463271B68A7FE00646DE2 /* LocationPicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B62463211B68A4DF00646DE2 /* LocationPicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -22,7 +24,28 @@
 			remoteGlobalIDString = B62462FF1B68A4DE00646DE2;
 			remoteInfo = LocationPicker;
 		};
+		B62463281B68A7FE00646DE2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B624631B1B68A4DE00646DE2 /* LocationPicker.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B62462FE1B68A4DE00646DE2;
+			remoteInfo = LocationPicker;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B624632A1B68A7FF00646DE2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B62463271B68A7FE00646DE2 /* LocationPicker.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		B62462D01B68A4BC00646DE2 /* LocationPickerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocationPickerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -40,6 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B62463261B68A7FE00646DE2 /* LocationPicker.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,10 +126,12 @@
 				B62462CC1B68A4BC00646DE2 /* Sources */,
 				B62462CD1B68A4BC00646DE2 /* Frameworks */,
 				B62462CE1B68A4BC00646DE2 /* Resources */,
+				B624632A1B68A7FF00646DE2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B62463291B68A7FE00646DE2 /* PBXTargetDependency */,
 			);
 			name = LocationPickerDemo;
 			productName = LocationPickerDemo;
@@ -184,6 +210,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B62463291B68A7FE00646DE2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = LocationPicker;
+			targetProxy = B62463281B68A7FE00646DE2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		B62462D91B68A4BC00646DE2 /* Main.storyboard */ = {
