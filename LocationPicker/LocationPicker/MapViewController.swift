@@ -16,11 +16,8 @@ public class MapViewController: UIViewController {
 	
 	public var location: Location? {
 		didSet {
-			if let location = location {
-				searchBar.text = location.name
-			} else {
-				searchBar.text = ""
-			}
+			searchBar.text = flatMap(location, { $0.title }) ?? ""
+			updateAnnotation()
 		}
 	}
 	
@@ -85,6 +82,30 @@ public class MapViewController: UIViewController {
 		}
 	}
 	
+	func updateAnnotation() {
+		if let location = location {
+			// whether it's just update from reverse geocoding or new annotation
+			var needsUpdate = true
+			
+			if let annotations = mapView.annotations as? [MKAnnotation],
+				let pointAnnotation = annotations.first as? MKPointAnnotation {
+					// if we're updating annotation after getting reverse geocoding results
+					if pointAnnotation.coordinate.latitude == location.coordinate.latitude
+						&& pointAnnotation.coordinate.longitude == location.coordinate.longitude {
+							pointAnnotation.title = location.title
+							needsUpdate = false
+					}
+			}
+			
+			if needsUpdate {
+				cleanAnnotations()
+				mapView.addAnnotation(location)
+			}
+		} else {
+			cleanAnnotations()
+		}
+	}
+	
 	func cleanAnnotations() {
 		if let annotations = mapView.annotations {
 			mapView.removeAnnotations(annotations)
@@ -131,20 +152,16 @@ extension MapViewController: UISearchResultsUpdating {
 	}
 	
 	func selectedLocation(location: Location) {
-		// remove old locations
-		cleanAnnotations()
-		
-		self.location = location
-		
 		// dismiss search results
 		dismissViewControllerAnimated(true) {
+			
 			// change review to center result location
 			let region = MKCoordinateRegionMakeWithDistance(location.coordinate,
 				self.resultRegionDistance, self.resultRegionDistance)
 			self.mapView.setRegion(region, animated: true)
 			
-			// add annotation
-			self.mapView.addAnnotation(location)
+			// set location, this also adds annotation
+			self.location = location
 		}
 	}
 }
@@ -158,24 +175,29 @@ extension MapViewController {
 			let coordinates = mapView.convertPoint(point, toCoordinateFromView: mapView)
 			let location = CLLocation(latitude: coordinates.latitude, longitude: coordinates.longitude)
 			
-			// remove current location
-			cleanAnnotations()
+			// clean location, cleans out old annotation too
+			self.location = nil
 			
-			// add annotation to map
+			// add point annotation to map
 			let annotation = MKPointAnnotation()
 			annotation.coordinate = coordinates
 			mapView.addAnnotation(annotation)
 			
 			geocoder.cancelGeocode()
 			geocoder.reverseGeocodeLocation(location) { response, error in
-				let placemark = (response as? [CLPlacemark])?.first
-				if let placemark = placemark {
+				if let error = error {
+					// show error and remove annotation
+					let alert = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .Alert)
+					alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: { _ in }))
+					self.presentViewController(alert, animated: true) {
+						self.mapView.removeAnnotation(annotation)
+					}
+				} else if let placemark = (response as? [CLPlacemark])?.first {
 					// get POI name from placemark if any
 					let name = (placemark.areasOfInterest as? [String])?.first
-					self.location = Location(name: name, placemark: placemark)
 					
-					// set annotatio title
-					annotation.title = self.location!.title
+					// pass user selected location too
+					self.location = Location(name: name, location: location, placemark: placemark)
 				}
 			}
 		}
@@ -192,13 +214,20 @@ extension MapViewController: MKMapViewDelegate {
 		pin.canShowCallout = true
 		return pin
 	}
+	
+	public func mapView(mapView: MKMapView!, didAddAnnotationViews views: [AnyObject]!) {
+		if let annotations = mapView.annotations {
+			assert(annotations.count == 1, "Only one annotation should be on map at a time")
+		}
+	}
 }
 
 // MARK: UISearchBarDelegate
 
 extension MapViewController: UISearchBarDelegate {
 	public func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-		if searchText == "" {
+		// remove location if user presses clear or removes text
+		if searchText.isEmpty {
 			location = nil
 		}
 	}
