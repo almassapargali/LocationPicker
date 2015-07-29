@@ -77,7 +77,7 @@ public class MapViewController: UIViewController {
 	public override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
 		
-		if (isMovingFromParentViewController() || isBeingDismissed()) {
+		if isMovingFromParentViewController() || isBeingDismissed() {
 			completion?(location)
 		}
 	}
