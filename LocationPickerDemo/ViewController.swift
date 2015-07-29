@@ -10,27 +10,15 @@ import UIKit
 import LocationPicker
 
 class ViewController: UIViewController {
-
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		// Do any additional setup after loading the view, typically from a nib.
-	}
+	@IBOutlet weak var locationNameLabel: UILabel!
 	
-	override func viewDidAppear(animated: Bool) {
-		super.viewDidAppear(animated)
-		
-		let locationPicker = MapViewController()
-		locationPicker.completion = { location in
-			if let location = location {
-				println(location.name)
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+		if segue.identifier == "LocationPicker" {
+			let locationPicker = segue.destinationViewController as! MapViewController
+			locationPicker.completion = { [weak self] location in
+				self?.locationNameLabel.text = flatMap(location, { $0.title }) ?? "No location selected"
 			}
 		}
-		navigationController?.pushViewController(locationPicker, animated: true)
-	}
-
-	override func didReceiveMemoryWarning() {
-		super.didReceiveMemoryWarning()
-		// Dispose of any resources that can be recreated.
 	}
 }
 
