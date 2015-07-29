@@ -3,6 +3,8 @@
 `LocationPickerViewController` is a `UIViewController` subclass to let users choose locations by searching or selecting on map.
 It's designed to work as `UIImagePickerController`.
 
+User can select location either by searching or long pressing on map. In both cases you'll receive CLPlacemark, which contains location coordinates as well as information such as the country, state, city, street address, and POI names.
+
 ## Installation
 
 ### Carthage
