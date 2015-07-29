@@ -21,7 +21,13 @@ public class Location: NSObject {
 	public let placemark: CLPlacemark
 	
 	var address: String {
-		return ABCreateStringWithAddressDictionary(placemark.addressDictionary, true)
+		// try to build full address first
+		if let lines = placemark.addressDictionary["FormattedAddressLines"] as? [String] {
+			return join(", ", lines)
+		} else {
+			// fallback
+			return ABCreateStringWithAddressDictionary(placemark.addressDictionary, true)
+		}
 	}
 	
 	init(name: String?, location: CLLocation? = nil, placemark: CLPlacemark) {
