@@ -15,24 +15,21 @@ import AddressBookUI
 // class because protocol
 public class Location: NSObject {
 	public let name: String
-	public let address: String
-	public let coordinates: CLLocation
+	public let placemark: CLPlacemark
 	
-	init(name: String, address: String, coordinates: CLLocation) {
-		self.name = name
-		self.address = address
-		self.coordinates = coordinates
+	var address: String {
+		return ABCreateStringWithAddressDictionary(placemark.addressDictionary, true)
 	}
 	
-	convenience init(name: String?, placemark: CLPlacemark) {
-		let address = ABCreateStringWithAddressDictionary(placemark.addressDictionary, true)
-		self.init(name: name ?? address, address: address, coordinates: placemark.location)
+	init(name: String?, placemark: CLPlacemark) {
+		self.name = name ?? ABCreateStringWithAddressDictionary(placemark.addressDictionary, true)
+		self.placemark = placemark
 	}
 }
 
 extension Location: MKAnnotation {
     @objc public var coordinate: CLLocationCoordinate2D {
-		return coordinates.coordinate
+		return placemark.location.coordinate
 	}
 	
     public var title: String {
