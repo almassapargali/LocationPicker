@@ -16,6 +16,14 @@ public class LocationPickerViewController: UIViewController {
 	// region distance to be used for creation region when user selects place from search results
 	lazy public var resultRegionDistance: CLLocationDistance = 600
 	
+	public var mapType: MKMapType = .Hybrid {
+		didSet {
+			if isViewLoaded() {
+				mapView.mapType = mapType
+			}
+		}
+	}
+	
 	public var location: Location? {
 		didSet {
 			if isViewLoaded() {
@@ -61,6 +69,7 @@ public class LocationPickerViewController: UIViewController {
 	
 	public override func loadView() {
 		mapView = MKMapView(frame: UIScreen.mainScreen().bounds)
+		mapView.mapType = mapType
 		view = mapView
 	}
 	
