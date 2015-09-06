@@ -20,6 +20,7 @@ class ViewController: UIViewController {
 			locationPicker.location = location
 			locationPicker.showCurrentLocationButton = true
 			locationPicker.useCurrentLocationAsHint = true
+			locationPicker.showCurrentLocationInitially = true
 			
 			locationPicker.completion = { location in
 				self.location = location

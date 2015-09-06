@@ -24,6 +24,8 @@ public class LocationPickerViewController: UIViewController {
 	
 	public var showCurrentLocationButton = false
 	
+	public var showCurrentLocationInitially = true
+	
 	/// see region property of MKLocalSearchRequest
 	public var useCurrentLocationAsHint = false
 	
@@ -120,14 +122,10 @@ public class LocationPickerViewController: UIViewController {
 		navigationItem.titleView = searchBar
 		definesPresentationContext = true
 		
-		var shouldGetCurrentLocation = false
-		
-		// current location as hint
-		if useCurrentLocationAsHint {
-			shouldGetCurrentLocation = true
-		}
-		
-		if shouldGetCurrentLocation {
+		if showCurrentLocationInitially {
+			showCurrentLocation()
+		// in else clause because getCurrentLocation() called inside showCurrentLocation()
+		} else if useCurrentLocationAsHint {
 			getCurrentLocation()
 		}
 		
