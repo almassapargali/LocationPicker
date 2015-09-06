@@ -47,7 +47,7 @@ public class LocationPickerViewController: UIViewController {
 	public var location: Location? {
 		didSet {
 			if isViewLoaded() {
-				searchBar.text = flatMap(location, { $0.title }) ?? ""
+				searchBar.text = flatMap(location, { $0.title }) ?? " "
 				updateAnnotation()
 			}
 		}
@@ -55,6 +55,7 @@ public class LocationPickerViewController: UIViewController {
 	
 	static let SearchTermKey = "SearchTermKey"
 	
+	let historyManager = SearchHistoryManager()
 	let locationManager = CLLocationManager()
 	let geocoder = CLGeocoder()
 	var localSearch: MKLocalSearch?
@@ -221,13 +222,21 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 	public func updateSearchResultsForSearchController(searchController: UISearchController) {
 		searchTimer?.invalidate()
 		
-		// clear old results
-		showItemsForSearchResult(nil)
+		let whitespaces = NSCharacterSet.whitespaceCharacterSet()
+		let searchTerm = searchController.searchBar.text.stringByTrimmingCharactersInSet(whitespaces)
 		
-		searchTimer = NSTimer.scheduledTimerWithTimeInterval(0.2,
-			target: self, selector: "searchFromTimer:",
-			userInfo: [LocationPickerViewController.SearchTermKey: searchController.searchBar.text],
-			repeats: false)
+		if searchTerm.isEmpty {
+			results.locations = historyManager.history()
+			results.tableView.reloadData()
+		} else {
+			// clear old results
+			showItemsForSearchResult(nil)
+			
+			searchTimer = NSTimer.scheduledTimerWithTimeInterval(0.2,
+				target: self, selector: "searchFromTimer:",
+				userInfo: [LocationPickerViewController.SearchTermKey: searchTerm],
+				repeats: false)
+		}
 	}
 	
 	func searchFromTimer(timer: NSTimer) {
@@ -254,8 +263,8 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 		if let response = searchResult, let mapItems = response.mapItems as? [MKMapItem] {
 			locations = map(mapItems) { Location(name: $0.name, placemark: $0.placemark) }
 		} else { locations = [] }
-		self.results.locations = locations
-		self.results.tableView.reloadData()
+		results.locations = locations
+		results.tableView.reloadData()
 	}
 	
 	func selectedLocation(location: Location) {
@@ -264,6 +273,8 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 			// set location, this also adds annotation
 			self.location = location
 			self.showCoordinates(location.coordinate)
+			
+			self.historyManager.addToHistory(location)
 		}
 	}
 }
@@ -327,6 +338,12 @@ extension LocationPickerViewController: MKMapViewDelegate {
 // MARK: UISearchBarDelegate
 
 extension LocationPickerViewController: UISearchBarDelegate {
+	public func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+		if searchBar.text.isEmpty {
+			searchBar.text = " "
+		}
+	}
+	
 	public func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
 		// remove location if user presses clear or removes text
 		if searchText.isEmpty {
