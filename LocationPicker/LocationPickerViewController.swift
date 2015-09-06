@@ -123,7 +123,7 @@ public class LocationPickerViewController: UIViewController {
 		navigationItem.titleView = searchBar
 		definesPresentationContext = true
 		
-		if showCurrentLocationInitially {
+		if location == nil && showCurrentLocationInitially {
 			showCurrentLocation()
 		// in else clause because getCurrentLocation() called inside showCurrentLocation()
 		} else if useCurrentLocationAsHint {
