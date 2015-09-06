@@ -227,6 +227,7 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 		
 		if searchTerm.isEmpty {
 			results.locations = historyManager.history()
+			results.isShowingHistory = true
 			results.tableView.reloadData()
 		} else {
 			// clear old results
@@ -264,6 +265,7 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 			locations = map(mapItems) { Location(name: $0.name, placemark: $0.placemark) }
 		} else { locations = [] }
 		results.locations = locations
+		results.isShowingHistory = false
 		results.tableView.reloadData()
 	}
 	
@@ -339,6 +341,8 @@ extension LocationPickerViewController: MKMapViewDelegate {
 
 extension LocationPickerViewController: UISearchBarDelegate {
 	public func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+		// dirty hack to show history when there is no text in search bar
+		// to be replaced later (hopefully)
 		if searchBar.text.isEmpty {
 			searchBar.text = " "
 		}
