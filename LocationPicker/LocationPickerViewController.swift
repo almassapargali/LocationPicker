@@ -11,10 +11,28 @@ import MapKit
 import CoreLocation
 
 public class LocationPickerViewController: UIViewController {
+	struct CurrentLocationListener {
+		let context: AnyObject?
+		let once: Bool
+		let action: (CLLocation) -> ()
+	}
+	
 	public var completion: (Location? -> ())?
 	
 	// region distance to be used for creation region when user selects place from search results
 	lazy public var resultRegionDistance: CLLocationDistance = 600
+	
+	public var showCurrentLocationButton = false
+	
+	/// see region property of MKLocalSearchRequest
+	public var useCurrentLocationAsHint = false
+	
+	lazy public var currentLocationButtonBackground: UIColor = {
+		if let navigationBar = self.navigationController?.navigationBar,
+			barTintColor = navigationBar.barTintColor {
+				return barTintColor
+		} else { return .whiteColor() }
+	}()
 	
 	public var mapType: MKMapType = .Hybrid {
 		didSet {
@@ -35,11 +53,15 @@ public class LocationPickerViewController: UIViewController {
 	
 	static let SearchTermKey = "SearchTermKey"
 	
+	let locationManager = CLLocationManager()
 	let geocoder = CLGeocoder()
 	var localSearch: MKLocalSearch?
 	var searchTimer: NSTimer?
 	
+	var currentLocationListeners: [CurrentLocationListener] = []
+	
 	var mapView: MKMapView!
+	var locationButton: UIButton?
 	
 	lazy var results: LocationSearchResultsViewController = {
 		let results = LocationSearchResultsViewController()
@@ -71,11 +93,23 @@ public class LocationPickerViewController: UIViewController {
 		mapView = MKMapView(frame: UIScreen.mainScreen().bounds)
 		mapView.mapType = mapType
 		view = mapView
+		
+		if showCurrentLocationButton {
+			let button = UIButton(frame: CGRect(x: 0, y: 0, width: 32, height: 32))
+			button.backgroundColor = currentLocationButtonBackground
+			button.layer.masksToBounds = true
+			button.layer.cornerRadius = 16
+			button.setImage(UIImage(named: "geolocation"), forState: .Normal)
+			button.addTarget(self, action: "showCurrentLocation", forControlEvents: .TouchUpInside)
+			view.addSubview(button)
+			locationButton = button
+		}
 	}
 	
 	public override func viewDidLoad() {
 		super.viewDidLoad()
 		
+		locationManager.delegate = self
 		mapView.delegate = self
 		searchBar.delegate = self
 		
@@ -86,10 +120,21 @@ public class LocationPickerViewController: UIViewController {
 		navigationItem.titleView = searchBar
 		definesPresentationContext = true
 		
+		var shouldGetCurrentLocation = false
+		
+		// current location as hint
+		if useCurrentLocationAsHint {
+			shouldGetCurrentLocation = true
+		}
+		
+		if shouldGetCurrentLocation {
+			getCurrentLocation()
+		}
+		
 		if let location = location {
 			// present initial location if any
 			self.location = location
-			showSelectedLocation()
+			showCoordinates(location.coordinate)
 		}
 	}
 	
@@ -99,6 +144,29 @@ public class LocationPickerViewController: UIViewController {
 		if isMovingFromParentViewController() || isBeingDismissed() {
 			completion?(location)
 		}
+	}
+	
+	public override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		if let button = locationButton {
+			button.frame.origin = CGPoint(
+				x: view.frame.width - button.frame.width - 16,
+				y: view.frame.height - button.frame.height - 20
+			)
+		}
+	}
+	
+	func getCurrentLocation() {
+		locationManager.requestWhenInUseAuthorization()
+		locationManager.startUpdatingLocation()
+	}
+	
+	func showCurrentLocation() {
+		let listener = CurrentLocationListener(context: nil, once: true) { [weak self] location in
+			self?.showCoordinates(location.coordinate)
+		}
+		currentLocationListeners.append(listener)
+		getCurrentLocation()
 	}
 	
 	func updateAnnotation() {
@@ -131,13 +199,21 @@ public class LocationPickerViewController: UIViewController {
 		}
 	}
 	
-	func showSelectedLocation() {
-		if let location = location {
-			// change review to center result location
-			let region = MKCoordinateRegionMakeWithDistance(location.coordinate,
-				resultRegionDistance, resultRegionDistance)
-			mapView.setRegion(region, animated: true)
+	func showCoordinates(coordinate: CLLocationCoordinate2D) {
+		let region = MKCoordinateRegionMakeWithDistance(coordinate, resultRegionDistance, resultRegionDistance)
+		mapView.setRegion(region, animated: true)
+	}
+}
+
+extension LocationPickerViewController: CLLocationManagerDelegate {
+	public func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
+		if let locations = locations as? [CLLocation], location = locations.first {
+			for listener in reverse(currentLocationListeners) {
+				listener.action(location)
+			}
+			currentLocationListeners = currentLocationListeners.filter { !$0.once }
 		}
+		manager.stopUpdatingLocation()
 	}
 }
 
@@ -162,6 +238,11 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 				let request = MKLocalSearchRequest()
 				request.naturalLanguageQuery = term
 				
+				if let location = locationManager.location where useCurrentLocationAsHint {
+					request.region = MKCoordinateRegion(center: location.coordinate,
+						span: MKCoordinateSpan(latitudeDelta: 2, longitudeDelta: 2))
+				}
+				
 				localSearch?.cancel()
 				localSearch = MKLocalSearch(request: request)
 				localSearch!.startWithCompletionHandler { response, error in
@@ -184,7 +265,7 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 		dismissViewControllerAnimated(true) {
 			// set location, this also adds annotation
 			self.location = location
-			self.showSelectedLocation()
+			self.showCoordinates(location.coordinate)
 		}
 	}
 }

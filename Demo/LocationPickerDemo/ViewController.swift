@@ -18,6 +18,8 @@ class ViewController: UIViewController {
 		if segue.identifier == "LocationPicker" {
 			let locationPicker = segue.destinationViewController as! LocationPickerViewController
 			locationPicker.location = location
+			locationPicker.showCurrentLocationButton = true
+			locationPicker.useCurrentLocationAsHint = true
 			
 			locationPicker.completion = { location in
 				self.location = location
