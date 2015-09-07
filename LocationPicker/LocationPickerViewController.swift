@@ -110,7 +110,7 @@ public class LocationPickerViewController: UIViewController {
 			button.layer.cornerRadius = 16
 			let bundle = NSBundle(forClass: LocationPickerViewController.self)
 			button.setImage(UIImage(named: "geolocation", inBundle: bundle, compatibleWithTraitCollection: nil), forState: .Normal)
-			button.addTarget(self, action: "showCurrentLocation", forControlEvents: .TouchUpInside)
+			button.addTarget(self, action: "currentLocationPressed", forControlEvents: .TouchUpInside)
 			view.addSubview(button)
 			locationButton = button
 		}
@@ -140,15 +140,7 @@ public class LocationPickerViewController: UIViewController {
 		if let location = location {
 			// present initial location if any
 			self.location = location
-			showCoordinates(location.coordinate)
-		}
-	}
-	
-	public override func viewWillDisappear(animated: Bool) {
-		super.viewWillDisappear(animated)
-		
-		if isMovingFromParentViewController() || isBeingDismissed() {
-			completion?(location)
+			showCoordinates(location.coordinate, animated: false)
 		}
 	}
 	
@@ -167,7 +159,12 @@ public class LocationPickerViewController: UIViewController {
 		locationManager.startUpdatingLocation()
 	}
 	
+	func currentLocationPressed() {
+		showCurrentLocation()
+	}
+	
 	func showCurrentLocation(animated: Bool = true) {
+		mapView.showsUserLocation = true
 		let listener = CurrentLocationListener(context: nil, once: true) { [weak self] location in
 			self?.showCoordinates(location.coordinate, animated: animated)
 		}
@@ -176,32 +173,12 @@ public class LocationPickerViewController: UIViewController {
 	}
 	
 	func updateAnnotation() {
-		if let location = location {
-			// whether it's just update from reverse geocoding or new annotation
-			var needsUpdate = true
-			
-			if let annotations = mapView.annotations as? [MKAnnotation],
-				let pointAnnotation = annotations.first as? MKPointAnnotation {
-					// if we're updating annotation after getting reverse geocoding results
-					if pointAnnotation.coordinate.latitude == location.coordinate.latitude
-						&& pointAnnotation.coordinate.longitude == location.coordinate.longitude {
-							pointAnnotation.title = location.title
-							needsUpdate = false
-					}
-			}
-			
-			if needsUpdate {
-				cleanAnnotations()
-				mapView.addAnnotation(location)
-			}
-		} else {
-			cleanAnnotations()
-		}
-	}
-	
-	func cleanAnnotations() {
 		if let annotations = mapView.annotations {
 			mapView.removeAnnotations(annotations)
+		}
+		if let location = location {
+			mapView.addAnnotation(location)
+			mapView.selectAnnotation(location, animated: true)
 		}
 	}
 	
@@ -214,12 +191,12 @@ public class LocationPickerViewController: UIViewController {
 extension LocationPickerViewController: CLLocationManagerDelegate {
 	public func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
 		if let locations = locations as? [CLLocation], location = locations.first {
-			for listener in reverse(currentLocationListeners) {
+			for listener in currentLocationListeners {
 				listener.action(location)
 			}
 			currentLocationListeners = currentLocationListeners.filter { !$0.once }
+			manager.stopUpdatingLocation()
 		}
-		manager.stopUpdatingLocation()
 	}
 }
 
@@ -330,16 +307,39 @@ extension LocationPickerViewController {
 
 extension LocationPickerViewController: MKMapViewDelegate {
 	public func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+		if annotation is MKUserLocation {
+			return nil
+		}
 		let pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "annotation")
 		pin.pinColor = .Green
-		pin.animatesDrop = true
-		pin.canShowCallout = true
+		// drop only on long press gesture
+		let fromLongPress = annotation is MKPointAnnotation
+		pin.animatesDrop = fromLongPress
+		pin.rightCalloutAccessoryView = selectLocationButton()
+		pin.canShowCallout = !fromLongPress
 		return pin
+	}
+	
+	func selectLocationButton() -> UIButton {
+		let button = UIButton(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
+		button.setTitle("Select", forState: .Normal)
+		button.setTitleColor(view.tintColor, forState: .Normal)
+		return button
+	}
+	
+	public func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
+		completion?(location)
+		if let navigation = navigationController where navigation.viewControllers.count > 1 {
+			navigation.popViewControllerAnimated(true)
+		} else {
+			presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
+		}
 	}
 	
 	public func mapView(mapView: MKMapView!, didAddAnnotationViews views: [AnyObject]!) {
 		if let annotations = mapView.annotations {
-			assert(annotations.count == 1, "Only one annotation should be on map at a time")
+			let pins = annotations.filter({ $0 is MKPinAnnotationView })
+			assert(pins.count <= 1, "Only 1 pin annotation should be on map at a time")
 		}
 	}
 }
