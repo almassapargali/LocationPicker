@@ -56,7 +56,7 @@ public class LocationPickerViewController: UIViewController {
 	public var location: Location? {
 		didSet {
 			if isViewLoaded() {
-				searchBar.text = flatMap(location, { $0.title }) ?? " "
+				searchBar.text = flatMap(location, { $0.title }) ?? ""
 				updateAnnotation()
 			}
 		}
