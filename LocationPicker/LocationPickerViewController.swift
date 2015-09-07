@@ -134,6 +134,8 @@ public class LocationPickerViewController: UIViewController {
 		navigationItem.titleView = searchBar
 		definesPresentationContext = true
 		
+		mapView.showsUserLocation = showCurrentLocationInitially || showCurrentLocationButton
+
 		if let location = location {
 			// present initial location if any
 			self.location = location
@@ -166,7 +168,6 @@ public class LocationPickerViewController: UIViewController {
 	}
 	
 	func showCurrentLocation(animated: Bool = true) {
-		mapView.showsUserLocation = true
 		let listener = CurrentLocationListener(context: nil, once: true) { [weak self] location in
 			self?.showCoordinates(location.coordinate, animated: animated)
 		}
