@@ -35,6 +35,9 @@ public class LocationPickerViewController: UIViewController {
 	/// default: "Search or enter an address"
 	public var searchBarPlaceholder = "Search or enter an address"
 	
+	/// default: "Search History"
+	public var searchHistoryLabel = "Search History"
+	
 	lazy public var currentLocationButtonBackground: UIColor = {
 		if let navigationBar = self.navigationController?.navigationBar,
 			barTintColor = navigationBar.barTintColor {
@@ -75,6 +78,7 @@ public class LocationPickerViewController: UIViewController {
 	lazy var results: LocationSearchResultsViewController = {
 		let results = LocationSearchResultsViewController()
 		results.onSelectLocation = { [weak self] in self?.selectedLocation($0) }
+		results.searchHistoryLabel = self.searchHistoryLabel
 		return results
 	}()
 	

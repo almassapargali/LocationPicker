@@ -11,11 +11,12 @@ import MapKit
 
 class LocationSearchResultsViewController: UITableViewController {
 	var locations: [Location] = []
-	var isShowingHistory = false
 	var onSelectLocation: (Location -> ())?
+	var isShowingHistory = false
+	var searchHistoryLabel: String?
 	
 	override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-		return isShowingHistory ? "Search History" : nil
+		return isShowingHistory ? searchHistoryLabel : nil
 	}
 
 	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
