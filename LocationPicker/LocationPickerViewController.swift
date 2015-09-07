@@ -125,7 +125,7 @@ public class LocationPickerViewController: UIViewController {
 		definesPresentationContext = true
 		
 		if location == nil && showCurrentLocationInitially {
-			showCurrentLocation()
+			showCurrentLocation(animated: false)
 		// in else clause because getCurrentLocation() called inside showCurrentLocation()
 		} else if useCurrentLocationAsHint {
 			getCurrentLocation()
@@ -161,9 +161,9 @@ public class LocationPickerViewController: UIViewController {
 		locationManager.startUpdatingLocation()
 	}
 	
-	func showCurrentLocation() {
+	func showCurrentLocation(animated: Bool = true) {
 		let listener = CurrentLocationListener(context: nil, once: true) { [weak self] location in
-			self?.showCoordinates(location.coordinate)
+			self?.showCoordinates(location.coordinate, animated: animated)
 		}
 		currentLocationListeners.append(listener)
 		getCurrentLocation()
@@ -199,9 +199,9 @@ public class LocationPickerViewController: UIViewController {
 		}
 	}
 	
-	func showCoordinates(coordinate: CLLocationCoordinate2D) {
+	func showCoordinates(coordinate: CLLocationCoordinate2D, animated: Bool = true) {
 		let region = MKCoordinateRegionMakeWithDistance(coordinate, resultRegionDistance, resultRegionDistance)
-		mapView.setRegion(region, animated: true)
+		mapView.setRegion(region, animated: animated)
 	}
 }
 
