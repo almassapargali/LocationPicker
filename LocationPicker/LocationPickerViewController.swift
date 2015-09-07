@@ -22,12 +22,18 @@ public class LocationPickerViewController: UIViewController {
 	// region distance to be used for creation region when user selects place from search results
 	lazy public var resultRegionDistance: CLLocationDistance = 600
 	
+	/// default: false
 	public var showCurrentLocationButton = false
 	
+	/// default: true
 	public var showCurrentLocationInitially = true
 	
 	/// see region property of MKLocalSearchRequest
+	/// default: false
 	public var useCurrentLocationAsHint = false
+	
+	/// default: "Search or enter an address"
+	public var searchBarPlaceholder = "Search or enter an address"
 	
 	lazy public var currentLocationButtonBackground: UIColor = {
 		if let navigationBar = self.navigationController?.navigationBar,
@@ -82,7 +88,7 @@ public class LocationPickerViewController: UIViewController {
 	lazy var searchBar: UISearchBar = {
 		let searchBar = self.searchController.searchBar
 		searchBar.searchBarStyle = .Minimal
-		searchBar.placeholder = "Search places"
+		searchBar.placeholder = self.searchBarPlaceholder
 		return searchBar
 	}()
 	
