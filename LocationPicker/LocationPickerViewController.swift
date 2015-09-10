@@ -133,12 +133,6 @@ public class LocationPickerViewController: UIViewController {
 		// search
 		navigationItem.titleView = searchBar
 		definesPresentationContext = true
-		
-		if showCurrentLocationButton || showCurrentLocationInitially {
-			locationManager.requestWhenInUseAuthorization()
-			mapView.userTrackingMode = .None
-			mapView.showsUserLocation = true
-		}
 
 		if let location = location {
 			// present initial location if any
@@ -177,6 +171,7 @@ public class LocationPickerViewController: UIViewController {
 		}
 		currentLocationListeners.append(listener)
 		getCurrentLocation()
+		mapView.showsUserLocation = true
 	}
 	
 	func updateAnnotation() {
