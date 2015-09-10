@@ -366,6 +366,7 @@ extension LocationPickerViewController: UISearchBarDelegate {
 		// remove location if user presses clear or removes text
 		if searchText.isEmpty {
 			location = nil
+			searchBar.text = " "
 		}
 	}
 }
