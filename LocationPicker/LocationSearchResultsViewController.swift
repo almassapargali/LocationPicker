@@ -15,6 +15,11 @@ class LocationSearchResultsViewController: UITableViewController {
 	var isShowingHistory = false
 	var searchHistoryLabel: String?
 	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		extendedLayoutIncludesOpaqueBars = true
+	}
+	
 	override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		return isShowingHistory ? searchHistoryLabel : nil
 	}
