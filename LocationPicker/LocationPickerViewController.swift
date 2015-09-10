@@ -134,7 +134,11 @@ public class LocationPickerViewController: UIViewController {
 		navigationItem.titleView = searchBar
 		definesPresentationContext = true
 		
-		mapView.showsUserLocation = showCurrentLocationInitially || showCurrentLocationButton
+		if showCurrentLocationButton || showCurrentLocationInitially {
+			locationManager.requestWhenInUseAuthorization()
+			mapView.userTrackingMode = .None
+			mapView.showsUserLocation = true
+		}
 
 		if let location = location {
 			// present initial location if any
