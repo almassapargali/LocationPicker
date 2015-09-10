@@ -9,10 +9,22 @@
 import UIKit
 import LocationPicker
 import CoreLocation
+import MapKit
 
 class ViewController: UIViewController {
 	@IBOutlet weak var locationNameLabel: UILabel!
-	var location: Location?
+	var location: Location? {
+		didSet {
+			locationNameLabel.text = flatMap(location, { $0.title }) ?? "No location selected"
+		}
+	}
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		let coordinates = CLLocationCoordinate2D(latitude: 43.25, longitude: 76.95)
+		location = Location(name: "Test", location: nil,
+			placemark: MKPlacemark(coordinate: coordinates, addressDictionary: [:]))
+	}
 	
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier == "LocationPicker" {
@@ -22,10 +34,7 @@ class ViewController: UIViewController {
 			locationPicker.useCurrentLocationAsHint = true
 			locationPicker.showCurrentLocationInitially = true
 			
-			locationPicker.completion = { location in
-				self.location = location
-				self.locationNameLabel.text = flatMap(location, { $0.title }) ?? "No location selected"
-			}
+			locationPicker.completion = { self.location = $0 }
 		}
 	}
 }
