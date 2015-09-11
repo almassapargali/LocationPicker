@@ -133,18 +133,17 @@ public class LocationPickerViewController: UIViewController {
 		// search
 		navigationItem.titleView = searchBar
 		definesPresentationContext = true
-
-		if let location = location {
-			// present initial location if any
-			self.location = location
-			showCoordinates(location.coordinate, animated: false)
-		} else if showCurrentLocationInitially {
-			showCurrentLocation(animated: false)
-		} else if useCurrentLocationAsHint {
-			// in else clause because getCurrentLocation() called inside showCurrentLocation()
+		
+		// user location
+		mapView.userTrackingMode = .None
+		mapView.showsUserLocation = showCurrentLocationInitially || showCurrentLocationButton
+		
+		if useCurrentLocationAsHint {
 			getCurrentLocation()
 		}
 	}
+	
+	var presentedInitialLocation = false
 	
 	public override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
@@ -153,6 +152,22 @@ public class LocationPickerViewController: UIViewController {
 				x: view.frame.width - button.frame.width - 16,
 				y: view.frame.height - button.frame.height - 20
 			)
+		}
+		
+		// setting initial location here since viewWillAppear is too early, and viewDidAppear is too late
+		if !presentedInitialLocation {
+			setInitialLocation()
+			presentedInitialLocation = true
+		}
+	}
+	
+	func setInitialLocation() {
+		if let location = location {
+			// present initial location if any
+			self.location = location
+			showCoordinates(location.coordinate, animated: false)
+		} else if showCurrentLocationInitially {
+			showCurrentLocation(animated: false)
 		}
 	}
 	
@@ -171,7 +186,6 @@ public class LocationPickerViewController: UIViewController {
 		}
 		currentLocationListeners.append(listener)
 		getCurrentLocation()
-		mapView.showsUserLocation = true
 	}
 	
 	func updateAnnotation() {
