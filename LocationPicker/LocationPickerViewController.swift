@@ -20,7 +20,7 @@ public class LocationPickerViewController: UIViewController {
 	public var completion: (Location? -> ())?
 	
 	// region distance to be used for creation region when user selects place from search results
-	lazy public var resultRegionDistance: CLLocationDistance = 600
+	public var resultRegionDistance: CLLocationDistance = 600
 	
 	/// default: true
 	public var showCurrentLocationButton = true
