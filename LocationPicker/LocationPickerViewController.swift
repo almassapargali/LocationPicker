@@ -246,11 +246,9 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 	}
 	
 	func showItemsForSearchResult(searchResult: MKLocalSearchResponse?) {
-		let locations: [Location]
-		if let response = searchResult, let mapItems = response.mapItems as? [MKMapItem] {
-			locations = map(mapItems) { Location(name: $0.name, placemark: $0.placemark) }
-		} else { locations = [] }
-		results.locations = locations
+		results.locations = flatMap(searchResult?.mapItems as? [MKMapItem]) { mapItems in
+			return map(mapItems) { Location(name: $0.name, placemark: $0.placemark) }
+		} ?? []
 		results.isShowingHistory = false
 		results.tableView.reloadData()
 	}
