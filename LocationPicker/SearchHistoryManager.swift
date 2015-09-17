@@ -17,17 +17,18 @@ struct SearchHistoryManager {
 	}
 	
 	func history() -> [Location] {
-		let history: [NSDictionary] = defaults.objectForKey(HistoryKey) as? [NSDictionary] ?? []
-		return history.map(Location.fromDefaultsDic).filter({ $0 != nil }).map({ $0! })
+		let history = defaults.objectForKey(HistoryKey) as? [NSDictionary] ?? []
+		return history.flatMap(Location.fromDefaultsDic)
 	}
 	
 	func addToHistory(location: Location) {
-		var history: [NSDictionary] = defaults.objectForKey(HistoryKey) as? [NSDictionary] ?? []
-		let historyNames = history.map { $0[LocationDicKeys.name] as? String }
-			.filter({ $0 != nil }).map({ $0! })
-		let shouldInclude = flatMap(location.name) { find(historyNames, $0) == nil } ?? true
+		guard let dic = location.toDefaultsDic() else { return }
+		
+		var history  = defaults.objectForKey(HistoryKey) as? [NSDictionary] ?? []
+		let historyNames = history.flatMap { $0[LocationDicKeys.name] as? String }
+		let shouldInclude = location.name.flatMap { historyNames.indexOf($0) == nil } ?? true
 		if shouldInclude {
-			history.append(location.toDefaultsDic())
+			history.append(dic)
 			defaults.setObject(history, forKey: HistoryKey)
 		}
 	}
@@ -47,50 +48,43 @@ struct CoordinateDicKeys {
 
 extension CLLocationCoordinate2D {
 	func toDefaultsDic() -> NSDictionary {
-		return [
-			CoordinateDicKeys.latitude: latitude,
-			CoordinateDicKeys.longitude: longitude
-		]
+		return [CoordinateDicKeys.latitude: latitude, CoordinateDicKeys.longitude: longitude]
 	}
 	
 	static func fromDefaultsDic(dic: NSDictionary) -> CLLocationCoordinate2D? {
-		if let latitude = dic[CoordinateDicKeys.latitude] as? NSNumber,
-			longitude = dic[CoordinateDicKeys.longitude] as? NSNumber {
-				return CLLocationCoordinate2D(latitude: latitude.doubleValue, longitude: longitude.doubleValue)
-		} else {
-			return nil
-		}
+		guard let latitude = dic[CoordinateDicKeys.latitude] as? NSNumber,
+			longitude = dic[CoordinateDicKeys.longitude] as? NSNumber else { return nil }
+		return CLLocationCoordinate2D(latitude: latitude.doubleValue, longitude: longitude.doubleValue)
 	}
 }
 
 extension Location {
-	func toDefaultsDic() -> NSDictionary {
+	func toDefaultsDic() -> NSDictionary? {
+		guard let addressDic = placemark.addressDictionary,
+			placemarkCoordinatesDic = placemark.location?.coordinate.toDefaultsDic()
+			else { return nil }
+		
 		var dic: [String: AnyObject] = [
 			LocationDicKeys.locationCoordinates: location.coordinate.toDefaultsDic(),
-			LocationDicKeys.placemarkCoordinates: placemark.location.coordinate.toDefaultsDic(),
-			LocationDicKeys.placemarkAddressDic: placemark.addressDictionary
+			LocationDicKeys.placemarkAddressDic: addressDic,
+			LocationDicKeys.placemarkCoordinates: placemarkCoordinatesDic
 		]
 		if let name = name { dic[LocationDicKeys.name] = name }
 		return dic
 	}
 	
 	class func fromDefaultsDic(dic: NSDictionary) -> Location? {
-		if let placemarkCoordinatesDic = dic[LocationDicKeys.placemarkCoordinates] as? NSDictionary,
+		guard let placemarkCoordinatesDic = dic[LocationDicKeys.placemarkCoordinates] as? NSDictionary,
 			placemarkCoordinates = CLLocationCoordinate2D.fromDefaultsDic(placemarkCoordinatesDic),
-			placemarkAddressDic = dic[LocationDicKeys.placemarkAddressDic] as? [NSObject: AnyObject] {
-				let location: CLLocation?
-				if let locationCoordinatesDic = dic[LocationDicKeys.locationCoordinates] as? NSDictionary,
-					coordinate = CLLocationCoordinate2D.fromDefaultsDic(locationCoordinatesDic) {
-						location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-				} else {
-					location = nil
-				}
-				return Location(name: dic[LocationDicKeys.name] as? String,
-					location: location,
-					placemark: MKPlacemark(coordinate: placemarkCoordinates,
-						addressDictionary: placemarkAddressDic))
-		} else {
-			return nil
-		}
+			placemarkAddressDic = dic[LocationDicKeys.placemarkAddressDic] as? [String: AnyObject]
+			else { return nil }
+		
+		let coordinatesDic = dic[LocationDicKeys.locationCoordinates] as? NSDictionary
+		let coordinate = coordinatesDic.flatMap(CLLocationCoordinate2D.fromDefaultsDic)
+		let location = coordinate.flatMap { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
+		
+		return Location(name: dic[LocationDicKeys.name] as? String,
+			location: location,
+			placemark: MKPlacemark(coordinate: placemarkCoordinates, addressDictionary: placemarkAddressDic))
 	}
 }

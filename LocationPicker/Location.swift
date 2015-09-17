@@ -24,7 +24,7 @@ public class Location: NSObject {
 		// try to build full address first
 		if let addressDic = placemark.addressDictionary {
 			if let lines = addressDic["FormattedAddressLines"] as? [String] {
-				return join(", ", lines)
+				return lines.joinWithSeparator(", ")
 			} else {
 				// fallback
 				return ABCreateStringWithAddressDictionary(addressDic, true)
@@ -36,7 +36,7 @@ public class Location: NSObject {
 	
 	public init(name: String?, location: CLLocation? = nil, placemark: CLPlacemark) {
 		self.name = name
-		self.location = location ?? placemark.location
+		self.location = location ?? placemark.location!
 		self.placemark = placemark
 	}
 }
@@ -48,7 +48,7 @@ extension Location: MKAnnotation {
 		return location.coordinate
 	}
 	
-    public var title: String {
+    public var title: String? {
 		return name ?? address
 	}
 }

@@ -15,7 +15,7 @@ class ViewController: UIViewController {
 	@IBOutlet weak var locationNameLabel: UILabel!
 	var location: Location? {
 		didSet {
-			locationNameLabel.text = flatMap(location, { $0.title }) ?? "No location selected"
+			locationNameLabel.text = location.flatMap({ $0.title }) ?? "No location selected"
 		}
 	}
 	

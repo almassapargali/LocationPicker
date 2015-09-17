@@ -29,7 +29,7 @@ class LocationSearchResultsViewController: UITableViewController {
 	}
 	
 	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		var cell = tableView.dequeueReusableCellWithIdentifier("LocationCell") as? UITableViewCell
+		let cell = tableView.dequeueReusableCellWithIdentifier("LocationCell")
 			?? UITableViewCell(style: .Subtitle, reuseIdentifier: "LocationCell")
 		
 		let location = locations[indexPath.row]
@@ -40,7 +40,6 @@ class LocationSearchResultsViewController: UITableViewController {
 	}
 	
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		let location = locations[indexPath.row]
-		onSelectLocation?(location)
+		onSelectLocation?(locations[indexPath.row])
 	}
 }
