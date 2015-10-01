@@ -20,7 +20,7 @@ public class Location: NSObject {
 	public let location: CLLocation
 	public let placemark: CLPlacemark
 	
-	var address: String {
+	public var address: String {
 		// try to build full address first
 		if let addressDic = placemark.addressDictionary {
 			if let lines = addressDic["FormattedAddressLines"] as? [String] {
