@@ -99,6 +99,7 @@ public class LocationPickerViewController: UIViewController {
 		searchTimer?.invalidate()
 		localSearch?.cancel()
 		geocoder.cancelGeocode()
+		searchController.loadViewIfNeeded()
 	}
 	
 	public override func loadView() {
