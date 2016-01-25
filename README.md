@@ -13,6 +13,12 @@ User can select location either by searching or long pressing on map. In both ca
 github "almassapargali/LocationPicker"
 ```
 
+### CocoaPods
+
+```
+pod 'LocationPicker'
+```
+
 ## Screenshots
 
 ![](https://raw.githubusercontent.com/almassapargali/LocationPicker/master/Screenshots/screen1.jpg)
