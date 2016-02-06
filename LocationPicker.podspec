@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.description = "LocationPickerViewController is a UIViewController subclass to let users choose locations by searching or selecting on map. It's designed to work as UIImagePickerController."
   s.summary  = "UIViewController subclass for searching or selecting locations on map."
   s.license  = 'MIT'
-  s.source   = { :git => 'https://github.com/almassapargal/LocationPicker.git', :tag => s.version.to_s }
+  s.source   = { :git => 'https://github.com/almassapargali/LocationPicker.git', :tag => s.version.to_s }
   s.source_files = 'LocationPicker'
   s.resource = 'LocationPicker/Images.xcassets'
   s.platform = :ios
