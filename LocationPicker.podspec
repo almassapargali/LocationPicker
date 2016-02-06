@@ -3,7 +3,8 @@ Pod::Spec.new do |s|
   s.version  = '0.5.2'
   s.author   = { 'Almas Sapargali' => 'almassapargali@gmail.com' }
   s.homepage = 'https://github.com/almassapargali/LocationPicker'
-  s.summary  = "LocationPickerViewController is a UIViewController subclass to let users choose locations by searching or selecting on map. It's designed to work as UIImagePickerController."
+  s.description = "LocationPickerViewController is a UIViewController subclass to let users choose locations by searching or selecting on map. It's designed to work as UIImagePickerController."
+  s.summary  = "UIViewController subclass for searching or selecting locations on map."
   s.license  = 'MIT'
   s.source   = { :git => 'https://github.com/almassapargal/LocationPicker.git', :tag => s.version.to_s }
   s.source_files = 'LocationPicker'
