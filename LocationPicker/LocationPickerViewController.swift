@@ -27,7 +27,7 @@ public class LocationPickerViewController: UIViewController {
 	/// default: true
 	public var showCurrentLocationInitially = true
 	
-	/// see region property of MKLocalSearchRequest
+	/// see `region` property of `MKLocalSearchRequest`
 	/// default: false
 	public var useCurrentLocationAsHint = false
 	

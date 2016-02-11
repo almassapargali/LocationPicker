@@ -23,7 +23,9 @@ pod 'LocationPicker'
 
 ![](https://raw.githubusercontent.com/almassapargali/LocationPicker/master/Screenshots/screen1.jpg)
 
-![](https://raw.githubusercontent.com/almassapargali/LocationPicker/master/Screenshots/screen2.jpg)
+![](https://raw.githubusercontent.com/almassapargali/LocationPicker/master/Screenshots/screen2.png)
+
+Clicking back button cancelling picking, clicking `Select` selects that locations, calls callback, and pops or dismisses view controller.
 
 ![](https://raw.githubusercontent.com/almassapargali/LocationPicker/master/Screenshots/screen3.jpg)
 
@@ -37,11 +39,29 @@ let locationPicker = LocationPickerViewController()
 
 // you can optionally set initial location
 let location = CLLocation(latitude: 35, longitude: 35)
-let initialLocation = Location(name: nil, location: location)
+let initialLocation = Location(name: "My home", location: location)
 locationPicker.location = initialLocation
 
-// optional region distance to be used for creation region when user selects place from search results (defaults to 600)
-locationPicker.resultRegionDistance = 500
+// button placed on right bottom corner
+locationPicker.showCurrentLocationButton = true // default: true
+
+// default: navigation bar's `barTintColor` or `.whiteColor()`
+locationPicker.currentLocationButtonBackground = .blueColor()
+
+// ignored if initial location is given, shows that location instead
+locationPicker.showCurrentLocationInitially = true // default: true
+
+locationPicker.mapType = .Standard // default: .Hybrid
+
+// for searching, see `MKLocalSearchRequest`'s `region` property
+locationPicker.useCurrentLocationAsHint = true // default: false
+
+locationPicker.searchBarPlaceholder = "Search places" // default: "Search or enter an address"
+
+locationPicker.searchHistoryLabel = "Previously searched" // default: "Search History"
+
+// optional region distance to be used for creation region when user selects place from search results
+locationPicker.resultRegionDistance = 500 // default: 600
 
 locationPicker.completion = { location in
     // do some awesome stuff with location
@@ -49,8 +69,6 @@ locationPicker.completion = { location in
 
 navigationController?.pushViewController(locationPicker, animated: true)
 ```
-
-*Note: `LocationPickerViewController` is expected to be pushed to `UINavigationController`. Pull requests for supporting other presentation styles are welcome*
 
 ## License
 
