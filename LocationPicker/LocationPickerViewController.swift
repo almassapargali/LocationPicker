@@ -43,6 +43,9 @@ public class LocationPickerViewController: UIViewController {
 				return barTintColor
 		} else { return .whiteColor() }
 	}()
+    
+    /// default: .Minimal
+    public var searchBarStyle: UISearchBarStyle = .Minimal
 	
 	public var mapType: MKMapType = .Hybrid {
 		didSet {
@@ -90,7 +93,7 @@ public class LocationPickerViewController: UIViewController {
 	
 	lazy var searchBar: UISearchBar = {
 		let searchBar = self.searchController.searchBar
-		searchBar.searchBarStyle = .Minimal
+		searchBar.searchBarStyle = self.searchBarStyle
 		searchBar.placeholder = self.searchBarPlaceholder
 		return searchBar
 	}()
