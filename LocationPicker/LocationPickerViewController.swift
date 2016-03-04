@@ -36,6 +36,9 @@ public class LocationPickerViewController: UIViewController {
 	
 	/// default: "Search History"
 	public var searchHistoryLabel = "Search History"
+    
+    /// default: "Select"
+    public var selectButtonTitle = "Select"
 	
 	lazy public var currentLocationButtonBackground: UIColor = {
 		if let navigationBar = self.navigationController?.navigationBar,
@@ -337,7 +340,7 @@ extension LocationPickerViewController: MKMapViewDelegate {
 	
 	func selectLocationButton() -> UIButton {
 		let button = UIButton(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
-		button.setTitle("Select", forState: .Normal)
+		button.setTitle(selectButtonTitle, forState: .Normal)
 		button.setTitleColor(view.tintColor, forState: .Normal)
 		return button
 	}
