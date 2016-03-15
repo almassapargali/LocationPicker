@@ -20,14 +20,9 @@ pod 'LocationPicker'
 ```
 
 ## Screenshots
-
-![](https://raw.githubusercontent.com/almassapargali/LocationPicker/master/Screenshots/screen1.jpg)
-
-![](https://raw.githubusercontent.com/almassapargali/LocationPicker/master/Screenshots/screen2.png)
-
-Clicking back button cancelling picking, clicking `Select` selects that locations, calls callback, and pops or dismisses view controller.
-
-![](https://raw.githubusercontent.com/almassapargali/LocationPicker/master/Screenshots/screen3.jpg)
+| Map | Search | Select |
+|---|---|---|
+| ![][screen1] | ![][screen3] | ![][screen2] |
 
 ## Usage
 
@@ -73,3 +68,7 @@ navigationController?.pushViewController(locationPicker, animated: true)
 ## License
 
 LocationPicker is available under the MIT license. See the LICENSE file for more info.
+
+[screen1]:https://raw.githubusercontent.com/almassapargali/LocationPicker/master/Screenshots/screen1.jpg
+[screen2]:https://raw.githubusercontent.com/almassapargali/LocationPicker/master/Screenshots/screen2.png
+[screen3]:https://raw.githubusercontent.com/almassapargali/LocationPicker/master/Screenshots/screen3.jpg
