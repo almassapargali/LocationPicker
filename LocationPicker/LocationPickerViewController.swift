@@ -341,6 +341,10 @@ extension LocationPickerViewController: MKMapViewDelegate {
 	func selectLocationButton() -> UIButton {
 		let button = UIButton(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
 		button.setTitle(selectButtonTitle, forState: .Normal)
+        if let titleLabel = button.titleLabel {
+            let width = titleLabel.textRectForBounds(CGRect(x: 0, y: 0, width: Int.max, height: 30), limitedToNumberOfLines: 1).width
+            button.frame.size = CGSize(width: width, height: 30.0)
+        }
 		button.setTitleColor(view.tintColor, forState: .Normal)
 		return button
 	}
