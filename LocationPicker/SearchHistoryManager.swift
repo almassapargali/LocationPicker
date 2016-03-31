@@ -26,9 +26,9 @@ struct SearchHistoryManager {
 		
 		var history  = defaults.objectForKey(HistoryKey) as? [NSDictionary] ?? []
 		let historyNames = history.flatMap { $0[LocationDicKeys.name] as? String }
-		let shouldInclude = location.name.flatMap { historyNames.indexOf($0) == nil } ?? true
-		if shouldInclude {
-			history.append(dic)
+        let alreadyInHistory = location.name.flatMap(historyNames.contains) ?? false
+		if !alreadyInHistory {
+			history.insert(dic, atIndex: 0)
 			defaults.setObject(history, forKey: HistoryKey)
 		}
 	}
