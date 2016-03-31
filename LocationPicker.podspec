@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'LocationPicker'
-  s.version  = '0.5.6'
+  s.version  = '0.5.7'
   s.author   = { 'Almas Sapargali' => 'almassapargali@gmail.com' }
   s.homepage = 'https://github.com/almassapargali/LocationPicker'
   s.description = "LocationPickerViewController is a UIViewController subclass to let users choose locations by searching or selecting on map. It's designed to work as UIImagePickerController."
