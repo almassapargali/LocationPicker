@@ -15,9 +15,16 @@ struct SearchHistoryManager {
 	private var defaults: NSUserDefaults {
 		return NSUserDefaults.standardUserDefaults()
 	}
+
+	/// Whether to sort from recent to old
+	/// default: false
+	var descending: Bool = false
 	
 	func history() -> [Location] {
-		let history = defaults.objectForKey(HistoryKey) as? [NSDictionary] ?? []
+		var history = defaults.objectForKey(HistoryKey) as? [NSDictionary] ?? []
+		if (descending) {
+			history = history.reverse()
+		}
 		return history.flatMap(Location.fromDefaultsDic)
 	}
 	
