@@ -49,6 +49,9 @@ public class LocationPickerViewController: UIViewController {
     
     /// default: .Minimal
     public var searchBarStyle: UISearchBarStyle = .Minimal
+
+	/// default: .Default
+	public var statusBarStyle: UIStatusBarStyle = .Default
 	
 	public var mapType: MKMapType = .Hybrid {
 		didSet {
@@ -148,6 +151,10 @@ public class LocationPickerViewController: UIViewController {
 		if useCurrentLocationAsHint {
 			getCurrentLocation()
 		}
+	}
+
+	public override func preferredStatusBarStyle() -> UIStatusBarStyle {
+		return statusBarStyle
 	}
 	
 	var presentedInitialLocation = false
