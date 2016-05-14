@@ -40,6 +40,9 @@ public class LocationPickerViewController: UIViewController {
 	/// default: "Search History"
 	public var searchHistoryLabel = "Search History"
     
+    /// default: .purpleColor() [iOS 9.+ only]
+    public var pinTintColor = UIColor.purpleColor()
+    
     /// default: "Select"
     public var selectButtonTitle = "Select"
 	
@@ -343,7 +346,11 @@ extension LocationPickerViewController: MKMapViewDelegate {
 		if annotation is MKUserLocation { return nil }
 		
 		let pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "annotation")
-		pin.pinColor = .Green
+        if #available(iOS 9.0, *) {
+            pin.pinTintColor = self.pinTintColor
+        } else {
+            pin.pinColor = .Purple
+        }
 		// drop only on long press gesture
 		let fromLongPress = annotation is MKPointAnnotation
 		pin.animatesDrop = fromLongPress
