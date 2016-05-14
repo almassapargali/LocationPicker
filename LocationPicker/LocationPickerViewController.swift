@@ -33,6 +33,9 @@ public class LocationPickerViewController: UIViewController {
 	
 	/// default: "Search or enter an address"
 	public var searchBarPlaceholder = "Search or enter an address"
+    
+    /// default: .blackColor()
+    public var searchBarTextColor = UIColor.blackColor()
 	
 	/// default: "Search History"
 	public var searchHistoryLabel = "Search History"
@@ -101,6 +104,8 @@ public class LocationPickerViewController: UIViewController {
 		let searchBar = self.searchController.searchBar
 		searchBar.searchBarStyle = self.searchBarStyle
 		searchBar.placeholder = self.searchBarPlaceholder
+        let searchField = searchBar.valueForKey("_searchField") as! UITextField
+        searchField.textColor = self.searchBarTextColor
 		return searchBar
 	}()
 	
