@@ -381,7 +381,12 @@ extension LocationPickerViewController: MKMapViewDelegate {
             if let error = error {
                 self.presentAlertAndRemoveAnnotation(error, annotation: annotation)
             } else {
-                annotation.title = self.location?.name
+                if let name = self.location?.name {
+                    annotation.title = name
+                } else {
+                    annotation.title = self.location?.address
+                }
+                
                 self.mapView.selectAnnotation(annotation, animated: true)
             }
         })
