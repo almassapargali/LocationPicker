@@ -71,7 +71,6 @@ public class LocationPickerViewController: UIViewController {
 		didSet {
 			if isViewLoaded() {
 				searchBar.text = location.flatMap({ $0.title }) ?? ""
-				updateAnnotation()
 			}
 		}
 	}
@@ -319,32 +318,48 @@ extension LocationPickerViewController {
 			annotation.coordinate = coordinates
 			mapView.addAnnotation(annotation)
 			
-			geocoder.cancelGeocode()
-			geocoder.reverseGeocodeLocation(location) { response, error in
-				if let error = error {
-					// show error and remove annotation
-					let alert = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .Alert)
-					alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: { _ in }))
-					self.presentViewController(alert, animated: true) {
-						self.mapView.removeAnnotation(annotation)
-					}
-				} else if let placemark = response?.first {
-					// get POI name from placemark if any
-					let name = placemark.areasOfInterest?.first
-					
-					// pass user selected location too
-					self.location = Location(name: name, location: location, placemark: placemark)
-				}
-			}
+			self.reverseGeocodeLocation(location, completion: { (error) in
+                if let error = error {
+                    self.presentAlertAndRemoveAnnotation(error, annotation: annotation)
+                } else {
+                    self.updateAnnotation()
+                }
+            })
 		}
 	}
+    
+    private func reverseGeocodeLocation(location: CLLocation, completion:(error: NSError?) -> Void) {
+        geocoder.cancelGeocode()
+        geocoder.reverseGeocodeLocation(location) { response, error in
+            if let error = error {
+                completion(error: error)
+            } else if let placemark = response?.first {
+                // get POI name from placemark if any
+                let name = placemark.areasOfInterest?.first
+                
+                // pass user selected location too
+                self.location = Location(name: name, location: location, placemark: placemark)
+                completion(error: nil)
+            }
+        }
+    }
+    
+    private func presentAlertAndRemoveAnnotation(error: NSError, annotation: MKAnnotation) {
+        let alert = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: { _ in }))
+        self.presentViewController(alert, animated: true) {
+            self.mapView.removeAnnotation(annotation)
+        }
+    }
 }
 
 // MARK: MKMapViewDelegate
 
 extension LocationPickerViewController: MKMapViewDelegate {
 	public func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-		if annotation is MKUserLocation { return nil }
+		if annotation is MKUserLocation {
+            self.confureMyLocationAnnotation(annotation as! MKUserLocation); return nil
+        }
 		
 		let pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "annotation")
         if #available(iOS 9.0, *) {
@@ -359,6 +374,17 @@ extension LocationPickerViewController: MKMapViewDelegate {
 		pin.canShowCallout = !fromLongPress
 		return pin
 	}
+    
+    private func confureMyLocationAnnotation(annotation: MKUserLocation) {
+        let location = CLLocation(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude)
+        self.reverseGeocodeLocation(location, completion: { (error) in
+            if let error = error {
+                self.presentAlertAndRemoveAnnotation(error, annotation: annotation)
+            } else {
+                annotation.title = self.location?.name
+            }
+        })
+    }
 	
 	func selectLocationButton() -> UIButton {
 		let button = UIButton(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
