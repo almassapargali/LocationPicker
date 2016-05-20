@@ -161,6 +161,9 @@ public class LocationPickerViewController: UIViewController {
 		if useCurrentLocationAsHint {
 			getCurrentLocation()
 		}
+        
+        self.updateAnnotation()
+        
 	}
 
 	public override func preferredStatusBarStyle() -> UIStatusBarStyle {
