@@ -297,6 +297,7 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 		dismissViewControllerAnimated(true) {
 			// set location, this also adds annotation
 			self.location = location
+            self.updateAnnotation()
 			self.showCoordinates(location.coordinate)
 			
 			self.historyManager.addToHistory(location)
