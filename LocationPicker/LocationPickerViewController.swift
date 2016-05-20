@@ -107,7 +107,8 @@ public class LocationPickerViewController: UIViewController {
 		let searchBar = self.searchController.searchBar
 		searchBar.searchBarStyle = self.searchBarStyle
 		searchBar.placeholder = self.searchBarPlaceholder
-        let searchField = searchBar.valueForKey("_searchField") as! UITextField
+        let subviews = searchBar.subviews.flatMap { $0.subviews }
+        let searchField = (subviews.filter { $0 is UITextField }).first as! UITextField
         searchField.textColor = self.searchBarTextColor
 		return searchBar
 	}()
