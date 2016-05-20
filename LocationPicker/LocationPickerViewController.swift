@@ -381,8 +381,8 @@ extension LocationPickerViewController: MKMapViewDelegate {
 	}
 	
 	public func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
-        let myAnnotatioview = views.filter { $0.annotation is MKUserLocation }.first
-        myAnnotatioview?.rightCalloutAccessoryView = selectLocationButton()
+        let myAnnotationView = views.filter { $0.annotation is MKUserLocation }.first
+        myAnnotationView?.rightCalloutAccessoryView = selectLocationButton()
 		let pins = mapView.annotations.filter { $0 is MKPinAnnotationView }
 		assert(pins.count <= 1, "Only 1 pin annotation should be on map at a time")
 	}
