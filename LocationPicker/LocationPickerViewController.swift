@@ -33,9 +33,15 @@ public class LocationPickerViewController: UIViewController {
 	
 	/// default: "Search or enter an address"
 	public var searchBarPlaceholder = "Search or enter an address"
+    
+    /// default: .blackColor()
+    public var searchBarTextColor = UIColor.blackColor()
 	
 	/// default: "Search History"
 	public var searchHistoryLabel = "Search History"
+    
+    /// default: .purpleColor() [iOS 9.+ only]
+    public var pinTintColor = UIColor.purpleColor()
     
     /// default: "Select"
     public var selectButtonTitle = "Select"
@@ -65,7 +71,6 @@ public class LocationPickerViewController: UIViewController {
 		didSet {
 			if isViewLoaded() {
 				searchBar.text = location.flatMap({ $0.title }) ?? ""
-				updateAnnotation()
 			}
 		}
 	}
@@ -101,6 +106,9 @@ public class LocationPickerViewController: UIViewController {
 		let searchBar = self.searchController.searchBar
 		searchBar.searchBarStyle = self.searchBarStyle
 		searchBar.placeholder = self.searchBarPlaceholder
+        let subviews = searchBar.subviews.flatMap { $0.subviews }
+        let searchField = (subviews.filter { $0 is UITextField }).first as! UITextField
+        searchField.textColor = self.searchBarTextColor
 		return searchBar
 	}()
 	
@@ -153,6 +161,9 @@ public class LocationPickerViewController: UIViewController {
 		if useCurrentLocationAsHint {
 			getCurrentLocation()
 		}
+        
+        self.updateAnnotation()
+        
 	}
 
 	public override func preferredStatusBarStyle() -> UIStatusBarStyle {
@@ -286,6 +297,7 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 		dismissViewControllerAnimated(true) {
 			// set location, this also adds annotation
 			self.location = location
+            self.updateAnnotation()
 			self.showCoordinates(location.coordinate)
 			
 			self.historyManager.addToHistory(location)
@@ -310,35 +322,55 @@ extension LocationPickerViewController {
 			annotation.coordinate = coordinates
 			mapView.addAnnotation(annotation)
 			
-			geocoder.cancelGeocode()
-			geocoder.reverseGeocodeLocation(location) { response, error in
-				if let error = error {
-					// show error and remove annotation
-					let alert = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .Alert)
-					alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: { _ in }))
-					self.presentViewController(alert, animated: true) {
-						self.mapView.removeAnnotation(annotation)
-					}
-				} else if let placemark = response?.first {
-					// get POI name from placemark if any
-					let name = placemark.areasOfInterest?.first
-					
-					// pass user selected location too
-					self.location = Location(name: name, location: location, placemark: placemark)
-				}
-			}
+			self.reverseGeocodeLocation(location, completion: { (error) in
+                if let error = error {
+                    self.presentAlertAndRemoveAnnotation(error, annotation: annotation)
+                } else {
+                    self.updateAnnotation()
+                }
+            })
 		}
 	}
+    
+    private func reverseGeocodeLocation(location: CLLocation, completion:(error: NSError?) -> Void) {
+        geocoder.cancelGeocode()
+        geocoder.reverseGeocodeLocation(location) { response, error in
+            if let error = error {
+                completion(error: error)
+            } else if let placemark = response?.first {
+                // get POI name from placemark if any
+                let name = placemark.areasOfInterest?.first
+                
+                // pass user selected location too
+                self.location = Location(name: name, location: location, placemark: placemark)
+                completion(error: nil)
+            }
+        }
+    }
+    
+    private func presentAlertAndRemoveAnnotation(error: NSError, annotation: MKAnnotation) {
+        let alert = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: { _ in }))
+        self.presentViewController(alert, animated: true) {
+            self.mapView.removeAnnotation(annotation)
+        }
+    }
 }
 
 // MARK: MKMapViewDelegate
 
 extension LocationPickerViewController: MKMapViewDelegate {
 	public func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-		if annotation is MKUserLocation { return nil }
+		if annotation is MKUserLocation {
+            self.confureMyLocationAnnotation(annotation as! MKUserLocation); return nil
+        }
 		
 		let pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "annotation")
-		pin.pinColor = .Green
+        if #available(iOS 9.0, *) {
+            pin.pinTintColor = self.pinTintColor
+        } else {
+            pin.pinColor = .Purple
+        }
 		// drop only on long press gesture
 		let fromLongPress = annotation is MKPointAnnotation
 		pin.animatesDrop = fromLongPress
@@ -346,6 +378,23 @@ extension LocationPickerViewController: MKMapViewDelegate {
 		pin.canShowCallout = !fromLongPress
 		return pin
 	}
+    
+    private func confureMyLocationAnnotation(annotation: MKUserLocation) {
+        let location = CLLocation(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude)
+        self.reverseGeocodeLocation(location, completion: { (error) in
+            if let error = error {
+                self.presentAlertAndRemoveAnnotation(error, annotation: annotation)
+            } else {
+                if let name = self.location?.name {
+                    annotation.title = name
+                } else {
+                    annotation.title = self.location?.address
+                }
+                
+                self.mapView.selectAnnotation(annotation, animated: true)
+            }
+        })
+    }
 	
 	func selectLocationButton() -> UIButton {
 		let button = UIButton(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
@@ -368,6 +417,8 @@ extension LocationPickerViewController: MKMapViewDelegate {
 	}
 	
 	public func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
+        let myAnnotationView = views.filter { $0.annotation is MKUserLocation }.first
+        myAnnotationView?.rightCalloutAccessoryView = selectLocationButton()
 		let pins = mapView.annotations.filter { $0 is MKPinAnnotationView }
 		assert(pins.count <= 1, "Only 1 pin annotation should be on map at a time")
 	}
