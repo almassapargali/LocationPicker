@@ -26,9 +26,9 @@ class ViewController: UIViewController {
 			placemark: MKPlacemark(coordinate: coordinates, addressDictionary: [:]))
 	}
 	
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "LocationPicker" {
-			let locationPicker = segue.destinationViewController as! LocationPickerViewController
+			let locationPicker = segue.destination as! LocationPickerViewController
 			locationPicker.location = location
 			locationPicker.showCurrentLocationButton = true
 			locationPicker.useCurrentLocationAsHint = true
