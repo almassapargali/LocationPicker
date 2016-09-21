@@ -11,7 +11,7 @@ import MapKit
 
 class LocationSearchResultsViewController: UITableViewController {
 	var locations: [Location] = []
-	var onSelectLocation: (Location -> ())?
+	var onSelectLocation: ((Location) -> ())?
 	var isShowingHistory = false
 	var searchHistoryLabel: String?
 	
@@ -20,18 +20,18 @@ class LocationSearchResultsViewController: UITableViewController {
 		extendedLayoutIncludesOpaqueBars = true
 	}
 	
-	override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		return isShowingHistory ? searchHistoryLabel : nil
 	}
 
-	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return locations.count
 	}
-	
-	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier("LocationCell")
-			?? UITableViewCell(style: .Subtitle, reuseIdentifier: "LocationCell")
-		
+
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "LocationCell")
+			?? UITableViewCell(style: .subtitle, reuseIdentifier: "LocationCell")
+
 		let location = locations[indexPath.row]
 		cell.textLabel?.text = location.name
 		cell.detailTextLabel?.text = location.address
@@ -39,7 +39,7 @@ class LocationSearchResultsViewController: UITableViewController {
 		return cell
 	}
 	
-	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		onSelectLocation?(locations[indexPath.row])
 	}
 }

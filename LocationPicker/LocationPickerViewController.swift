@@ -16,7 +16,7 @@ public class LocationPickerViewController: UIViewController {
 		let action: (CLLocation) -> ()
 	}
 	
-	public var completion: (Location? -> ())?
+	public var completion: ((Location?) -> ())?
 	
 	// region distance to be used for creation region when user selects place from search results
 	public var resultRegionDistance: CLLocationDistance = 600
@@ -42,20 +42,20 @@ public class LocationPickerViewController: UIViewController {
 	
 	lazy public var currentLocationButtonBackground: UIColor = {
 		if let navigationBar = self.navigationController?.navigationBar,
-			barTintColor = navigationBar.barTintColor {
+			let barTintColor = navigationBar.barTintColor {
 				return barTintColor
-		} else { return .whiteColor() }
+		} else { return .white }
 	}()
     
     /// default: .Minimal
-    public var searchBarStyle: UISearchBarStyle = .Minimal
+    public var searchBarStyle: UISearchBarStyle = .minimal
 
 	/// default: .Default
-	public var statusBarStyle: UIStatusBarStyle = .Default
+	public var statusBarStyle: UIStatusBarStyle = .default
 	
-	public var mapType: MKMapType = .Hybrid {
+	public var mapType: MKMapType = .hybrid {
 		didSet {
-			if isViewLoaded() {
+			if isViewLoaded {
 				mapView.mapType = mapType
 			}
 		}
@@ -63,7 +63,7 @@ public class LocationPickerViewController: UIViewController {
 	
 	public var location: Location? {
 		didSet {
-			if isViewLoaded() {
+			if isViewLoaded {
 				searchBar.text = location.flatMap({ $0.title }) ?? ""
 				updateAnnotation()
 			}
@@ -76,7 +76,7 @@ public class LocationPickerViewController: UIViewController {
 	let locationManager = CLLocationManager()
 	let geocoder = CLGeocoder()
 	var localSearch: MKLocalSearch?
-	var searchTimer: NSTimer?
+	var searchTimer: Timer?
 	
 	var currentLocationListeners: [CurrentLocationListener] = []
 	
@@ -113,7 +113,7 @@ public class LocationPickerViewController: UIViewController {
 	}
 	
 	public override func loadView() {
-		mapView = MKMapView(frame: UIScreen.mainScreen().bounds)
+		mapView = MKMapView(frame: UIScreen.main.bounds)
 		mapView.mapType = mapType
 		view = mapView
 		
@@ -122,10 +122,10 @@ public class LocationPickerViewController: UIViewController {
 			button.backgroundColor = currentLocationButtonBackground
 			button.layer.masksToBounds = true
 			button.layer.cornerRadius = 16
-			let bundle = NSBundle(forClass: LocationPickerViewController.self)
-			button.setImage(UIImage(named: "geolocation", inBundle: bundle, compatibleWithTraitCollection: nil), forState: .Normal)
+			let bundle = Bundle(for: LocationPickerViewController.self)
+			button.setImage(UIImage(named: "geolocation", in: bundle, compatibleWith: nil), for: UIControlState())
 			button.addTarget(self, action: #selector(LocationPickerViewController.currentLocationPressed),
-			                 forControlEvents: .TouchUpInside)
+			                 for: .touchUpInside)
 			view.addSubview(button)
 			locationButton = button
 		}
@@ -147,7 +147,7 @@ public class LocationPickerViewController: UIViewController {
 		definesPresentationContext = true
 		
 		// user location
-		mapView.userTrackingMode = .None
+		mapView.userTrackingMode = .none
 		mapView.showsUserLocation = showCurrentLocationInitially || showCurrentLocationButton
 		
 		if useCurrentLocationAsHint {
@@ -155,7 +155,7 @@ public class LocationPickerViewController: UIViewController {
 		}
 	}
 
-	public override func preferredStatusBarStyle() -> UIStatusBarStyle {
+	public override var preferredStatusBarStyle : UIStatusBarStyle {
 		return statusBarStyle
 	}
 	
@@ -196,7 +196,7 @@ public class LocationPickerViewController: UIViewController {
 		showCurrentLocation()
 	}
 	
-	func showCurrentLocation(animated: Bool = true) {
+	func showCurrentLocation(_ animated: Bool = true) {
 		let listener = CurrentLocationListener(once: true) { [weak self] location in
 			self?.showCoordinates(location.coordinate, animated: animated)
 		}
@@ -212,18 +212,16 @@ public class LocationPickerViewController: UIViewController {
 		}
 	}
 	
-	func showCoordinates(coordinate: CLLocationCoordinate2D, animated: Bool = true) {
+	func showCoordinates(_ coordinate: CLLocationCoordinate2D, animated: Bool = true) {
 		let region = MKCoordinateRegionMakeWithDistance(coordinate, resultRegionDistance, resultRegionDistance)
 		mapView.setRegion(region, animated: animated)
 	}
 }
 
 extension LocationPickerViewController: CLLocationManagerDelegate {
-	public func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+	public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 		guard let location = locations.first else { return }
-		for listener in currentLocationListeners {
-			listener.action(location)
-		}
+        currentLocationListeners.forEach { $0.action(location) }
 		currentLocationListeners = currentLocationListeners.filter { !$0.once }
 		manager.stopUpdatingLocation()
 	}
@@ -232,13 +230,12 @@ extension LocationPickerViewController: CLLocationManagerDelegate {
 // MARK: Searching
 
 extension LocationPickerViewController: UISearchResultsUpdating {
-	public func updateSearchResultsForSearchController(searchController: UISearchController) {
+	public func updateSearchResults(for searchController: UISearchController) {
 		guard let term = searchController.searchBar.text else { return }
 		
 		searchTimer?.invalidate()
-		
-		let whitespaces = NSCharacterSet.whitespaceCharacterSet()
-		let searchTerm = term.stringByTrimmingCharactersInSet(whitespaces)
+
+		let searchTerm = term.trimmingCharacters(in: CharacterSet.whitespaces)
 		
 		if searchTerm.isEmpty {
 			results.locations = historyManager.history()
@@ -248,42 +245,42 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 			// clear old results
 			showItemsForSearchResult(nil)
 			
-			searchTimer = NSTimer.scheduledTimerWithTimeInterval(0.2,
+			searchTimer = Timer.scheduledTimer(timeInterval: 0.2,
 				target: self, selector: #selector(LocationPickerViewController.searchFromTimer(_:)),
 				userInfo: [LocationPickerViewController.SearchTermKey: searchTerm],
 				repeats: false)
 		}
 	}
 	
-	func searchFromTimer(timer: NSTimer) {
+	func searchFromTimer(_ timer: Timer) {
 		guard let userInfo = timer.userInfo as? [String: AnyObject],
-			term = userInfo[LocationPickerViewController.SearchTermKey] as? String
+			let term = userInfo[LocationPickerViewController.SearchTermKey] as? String
 			else { return }
 		
 		let request = MKLocalSearchRequest()
 		request.naturalLanguageQuery = term
 		
-		if let location = locationManager.location where useCurrentLocationAsHint {
+		if let location = locationManager.location, useCurrentLocationAsHint {
 			request.region = MKCoordinateRegion(center: location.coordinate,
 				span: MKCoordinateSpan(latitudeDelta: 2, longitudeDelta: 2))
 		}
 		
 		localSearch?.cancel()
 		localSearch = MKLocalSearch(request: request)
-		localSearch!.startWithCompletionHandler { response, error in
+		localSearch!.start { response, _ in
 			self.showItemsForSearchResult(response)
 		}
 	}
 	
-	func showItemsForSearchResult(searchResult: MKLocalSearchResponse?) {
+	func showItemsForSearchResult(_ searchResult: MKLocalSearchResponse?) {
 		results.locations = searchResult?.mapItems.map { Location(name: $0.name, placemark: $0.placemark) } ?? []
 		results.isShowingHistory = false
 		results.tableView.reloadData()
 	}
 	
-	func selectedLocation(location: Location) {
+	func selectedLocation(_ location: Location) {
 		// dismiss search results
-		dismissViewControllerAnimated(true) {
+		dismiss(animated: true) {
 			// set location, this also adds annotation
 			self.location = location
 			self.showCoordinates(location.coordinate)
@@ -296,10 +293,10 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 // MARK: Selecting location with gesture
 
 extension LocationPickerViewController {
-	func addLocation(gestureRecognizer: UIGestureRecognizer) {
-		if gestureRecognizer.state == .Began {
-			let point = gestureRecognizer.locationInView(mapView)
-			let coordinates = mapView.convertPoint(point, toCoordinateFromView: mapView)
+	func addLocation(_ gestureRecognizer: UIGestureRecognizer) {
+		if gestureRecognizer.state == .began {
+			let point = gestureRecognizer.location(in: mapView)
+			let coordinates = mapView.convert(point, toCoordinateFrom: mapView)
 			let location = CLLocation(latitude: coordinates.latitude, longitude: coordinates.longitude)
 			
 			// clean location, cleans out old annotation too
@@ -314,9 +311,9 @@ extension LocationPickerViewController {
 			geocoder.reverseGeocodeLocation(location) { response, error in
 				if let error = error {
 					// show error and remove annotation
-					let alert = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .Alert)
-					alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: { _ in }))
-					self.presentViewController(alert, animated: true) {
+					let alert = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .alert)
+					alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in }))
+					self.present(alert, animated: true) {
 						self.mapView.removeAnnotation(annotation)
 					}
 				} else if let placemark = response?.first {
@@ -334,11 +331,11 @@ extension LocationPickerViewController {
 // MARK: MKMapViewDelegate
 
 extension LocationPickerViewController: MKMapViewDelegate {
-	public func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+	public func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
 		if annotation is MKUserLocation { return nil }
 		
 		let pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "annotation")
-		pin.pinColor = .Green
+		pin.pinColor = .green
 		// drop only on long press gesture
 		let fromLongPress = annotation is MKPointAnnotation
 		pin.animatesDrop = fromLongPress
@@ -349,25 +346,25 @@ extension LocationPickerViewController: MKMapViewDelegate {
 	
 	func selectLocationButton() -> UIButton {
 		let button = UIButton(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
-		button.setTitle(selectButtonTitle, forState: .Normal)
+		button.setTitle(selectButtonTitle, for: UIControlState())
         if let titleLabel = button.titleLabel {
-            let width = titleLabel.textRectForBounds(CGRect(x: 0, y: 0, width: Int.max, height: 30), limitedToNumberOfLines: 1).width
+            let width = titleLabel.textRect(forBounds: CGRect(x: 0, y: 0, width: Int.max, height: 30), limitedToNumberOfLines: 1).width
             button.frame.size = CGSize(width: width, height: 30.0)
         }
-		button.setTitleColor(view.tintColor, forState: .Normal)
+		button.setTitleColor(view.tintColor, for: UIControlState())
 		return button
 	}
 	
-	public func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+	public func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
 		completion?(location)
-		if let navigation = navigationController where navigation.viewControllers.count > 1 {
-			navigation.popViewControllerAnimated(true)
+		if let navigation = navigationController, navigation.viewControllers.count > 1 {
+			navigation.popViewController(animated: true)
 		} else {
-			presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
+			presentingViewController?.dismiss(animated: true, completion: nil)
 		}
 	}
 	
-	public func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
+	public func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
 		let pins = mapView.annotations.filter { $0 is MKPinAnnotationView }
 		assert(pins.count <= 1, "Only 1 pin annotation should be on map at a time")
 	}
@@ -376,15 +373,15 @@ extension LocationPickerViewController: MKMapViewDelegate {
 // MARK: UISearchBarDelegate
 
 extension LocationPickerViewController: UISearchBarDelegate {
-	public func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+	public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
 		// dirty hack to show history when there is no text in search bar
 		// to be replaced later (hopefully)
-		if let text = searchBar.text where text.isEmpty {
+		if let text = searchBar.text, text.isEmpty {
 			searchBar.text = " "
 		}
 	}
 	
-	public func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+	public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
 		// remove location if user presses clear or removes text
 		if searchText.isEmpty {
 			location = nil

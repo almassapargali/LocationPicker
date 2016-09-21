@@ -24,7 +24,7 @@ public class Location: NSObject {
 		// try to build full address first
 		if let addressDic = placemark.addressDictionary {
 			if let lines = addressDic["FormattedAddressLines"] as? [String] {
-				return lines.joinWithSeparator(", ")
+				return lines.joined(separator: ", ")
 			} else {
 				// fallback
 				return ABCreateStringWithAddressDictionary(addressDic, true)
