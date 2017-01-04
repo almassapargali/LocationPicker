@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 import CoreLocation
 
-public class LocationPickerViewController: UIViewController {
+open class LocationPickerViewController: UIViewController {
 	struct CurrentLocationListener {
 		let once: Bool
 		let action: (CLLocation) -> ()
@@ -112,7 +112,7 @@ public class LocationPickerViewController: UIViewController {
         let _ = searchController.view
 	}
 	
-	public override func loadView() {
+	open override func loadView() {
 		mapView = MKMapView(frame: UIScreen.main.bounds)
 		mapView.mapType = mapType
 		view = mapView
@@ -131,7 +131,7 @@ public class LocationPickerViewController: UIViewController {
 		}
 	}
 	
-	public override func viewDidLoad() {
+	open override func viewDidLoad() {
 		super.viewDidLoad()
 		
 		locationManager.delegate = self
@@ -155,13 +155,13 @@ public class LocationPickerViewController: UIViewController {
 		}
 	}
 
-	public override var preferredStatusBarStyle : UIStatusBarStyle {
+	open override var preferredStatusBarStyle : UIStatusBarStyle {
 		return statusBarStyle
 	}
 	
 	var presentedInitialLocation = false
 	
-	public override func viewDidLayoutSubviews() {
+	open override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
 		if let button = locationButton {
 			button.frame.origin = CGPoint(
