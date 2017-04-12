@@ -201,6 +201,7 @@ open class LocationPickerViewController: UIViewController {
 	func showCurrentLocation(_ animated: Bool = true) {
 		let listener = CurrentLocationListener(once: true) { [weak self] location in
 			self?.showCoordinates(location.coordinate, animated: animated)
+			self?.updateLocation(location: location)
 		}
 		currentLocationListeners.append(listener)
 		getCurrentLocation()
@@ -301,30 +302,34 @@ extension LocationPickerViewController {
 			let coordinates = mapView.convert(point, toCoordinateFrom: mapView)
 			let location = CLLocation(latitude: coordinates.latitude, longitude: coordinates.longitude)
 			
-			// clean location, cleans out old annotation too
-			self.location = nil
+			updateLocation(location: location)
+		}
+	}
+	
+	func updateLocation(location: CLLocation) {
+		// clean location, cleans out old annotation too
+		self.location = nil
 			
-			// add point annotation to map
-			let annotation = MKPointAnnotation()
-			annotation.coordinate = coordinates
-			mapView.addAnnotation(annotation)
-			
-			geocoder.cancelGeocode()
-			geocoder.reverseGeocodeLocation(location) { response, error in
-				if let error = error {
-					// show error and remove annotation
-					let alert = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .alert)
-					alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in }))
-					self.present(alert, animated: true) {
-						self.mapView.removeAnnotation(annotation)
-					}
-				} else if let placemark = response?.first {
-					// get POI name from placemark if any
-					let name = placemark.areasOfInterest?.first
-					
-					// pass user selected location too
-					self.location = Location(name: name, location: location, placemark: placemark)
+		// add point annotation to map
+		let annotation = MKPointAnnotation()
+		annotation.coordinate = location.coordinate
+		mapView.addAnnotation(annotation)
+
+		geocoder.cancelGeocode()
+		geocoder.reverseGeocodeLocation(location) { response, error in
+			if let error = error {
+				// show error and remove annotation
+				let alert = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .alert)
+				alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in }))
+				self.present(alert, animated: true) {
+					self.mapView.removeAnnotation(annotation)
 				}
+			} else if let placemark = response?.first {
+				// get POI name from placemark if any
+				let name = placemark.areasOfInterest?.first
+
+				// pass user selected location too
+				self.location = Location(name: name, location: location, placemark: placemark)
 			}
 		}
 	}
