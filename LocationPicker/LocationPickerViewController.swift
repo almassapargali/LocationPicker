@@ -311,7 +311,7 @@ extension LocationPickerViewController {
 			
 			geocoder.cancelGeocode()
 			geocoder.reverseGeocodeLocation(location) { response, error in
-				if let error = error {
+				if let error = error as? NSError, error.code != 10 { // ignore cancelGeocode errors
 					// show error and remove annotation
 					let alert = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .alert)
 					alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in }))
