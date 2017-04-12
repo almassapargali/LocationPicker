@@ -139,9 +139,11 @@ open class LocationPickerViewController: UIViewController {
 		searchBar.delegate = self
 		
 		// gesture recognizer for adding by tap
-		mapView.addGestureRecognizer(UILongPressGestureRecognizer(target: self,
-            action: #selector(LocationPickerViewController.addLocation(_:))))
-		
+        let locationSelectGesture = UILongPressGestureRecognizer(
+            target: self, action: #selector(addLocation(_:)))
+        locationSelectGesture.delegate = self
+		mapView.addGestureRecognizer(locationSelectGesture)
+
 		// search
 		navigationItem.titleView = searchBar
 		definesPresentationContext = true
@@ -367,7 +369,17 @@ extension LocationPickerViewController: MKMapViewDelegate {
 	public func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
 		let pins = mapView.annotations.filter { $0 is MKPinAnnotationView }
 		assert(pins.count <= 1, "Only 1 pin annotation should be on map at a time")
+
+        if let userPin = views.first(where: { $0.annotation is MKUserLocation }) {
+            userPin.canShowCallout = false
+        }
 	}
+}
+
+extension LocationPickerViewController: UIGestureRecognizerDelegate {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
 }
 
 // MARK: UISearchBarDelegate
