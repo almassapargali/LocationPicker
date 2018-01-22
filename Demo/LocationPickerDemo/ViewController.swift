@@ -13,6 +13,7 @@ import MapKit
 
 class ViewController: UIViewController {
 	@IBOutlet weak var locationNameLabel: UILabel!
+    
 	var location: Location? {
 		didSet {
 			locationNameLabel.text = location.flatMap({ $0.title }) ?? "No location selected"
