@@ -7,7 +7,7 @@ User can select location either by searching or long pressing on map. In both ca
 
 ## Installation
 
-Uses Swift 3, use version `0.6.0` for Swift 2/Xcode 7.
+Uses Swift 4, use version `0.6.0` for Swift 2/Xcode 7, `1.0.3` for Swift 3.
 
 ### Carthage
 
