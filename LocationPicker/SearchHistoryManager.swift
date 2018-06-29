@@ -28,6 +28,7 @@ struct SearchHistoryManager {
 		if !alreadyInHistory {
 			history.insert(dic, at: 0)
 			defaults.set(history, forKey: HistoryKey)
+            defaults.synchronize()
 		}
 	}
 }
