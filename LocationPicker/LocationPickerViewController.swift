@@ -149,7 +149,11 @@ open class LocationPickerViewController: UIViewController {
 		mapView.addGestureRecognizer(locationSelectGesture)
 
 		// search
-		navigationItem.titleView = searchBar
+        if #available(iOS 11.0, *) {
+            navigationItem.searchController = searchController
+        } else {
+            navigationItem.titleView = searchBar
+        }
 		definesPresentationContext = true
 		
 		// user location
