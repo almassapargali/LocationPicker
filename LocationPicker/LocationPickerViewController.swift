@@ -232,7 +232,7 @@ open class LocationPickerViewController: UIViewController {
 	}
 	
 	func showCoordinates(_ coordinate: CLLocationCoordinate2D, animated: Bool = true) {
-		let region = MKCoordinateRegion.init(center: coordinate, latitudinalMeters: resultRegionDistance, longitudinalMeters: resultRegionDistance)
+		let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: resultRegionDistance, longitudinalMeters: resultRegionDistance)
 		mapView.setRegion(region, animated: animated)
 	}
 
