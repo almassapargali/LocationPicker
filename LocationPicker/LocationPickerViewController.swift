@@ -52,7 +52,7 @@ open class LocationPickerViewController: UIViewController {
 	}()
     
     /// default: .Minimal
-    public var searchBarStyle: UISearchBarStyle = .minimal
+    public var searchBarStyle: UISearchBar.Style = .minimal
 
 	/// default: .Default
 	public var statusBarStyle: UIStatusBarStyle = .default
@@ -127,7 +127,7 @@ open class LocationPickerViewController: UIViewController {
 			button.layer.masksToBounds = true
 			button.layer.cornerRadius = 16
 			let bundle = Bundle(for: LocationPickerViewController.self)
-			button.setImage(UIImage(named: "geolocation", in: bundle, compatibleWith: nil), for: UIControlState())
+			button.setImage(UIImage(named: "geolocation", in: bundle, compatibleWith: nil), for: UIControl.State())
 			button.addTarget(self, action: #selector(LocationPickerViewController.currentLocationPressed),
 			                 for: .touchUpInside)
 			view.addSubview(button)
@@ -232,7 +232,7 @@ open class LocationPickerViewController: UIViewController {
 	}
 	
 	func showCoordinates(_ coordinate: CLLocationCoordinate2D, animated: Bool = true) {
-		let region = MKCoordinateRegionMakeWithDistance(coordinate, resultRegionDistance, resultRegionDistance)
+		let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: resultRegionDistance, longitudinalMeters: resultRegionDistance)
 		mapView.setRegion(region, animated: animated)
 	}
 
@@ -301,7 +301,7 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 			let term = userInfo[LocationPickerViewController.SearchTermKey] as? String
 			else { return }
 		
-		let request = MKLocalSearchRequest()
+		let request = MKLocalSearch.Request()
 		request.naturalLanguageQuery = term
 		
 		if let location = locationManager.location, useCurrentLocationAsHint {
@@ -316,7 +316,7 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 		}
 	}
 	
-	func showItemsForSearchResult(_ searchResult: MKLocalSearchResponse?) {
+	func showItemsForSearchResult(_ searchResult: MKLocalSearch.Response?) {
 		results.locations = searchResult?.mapItems.map { Location(name: $0.name, placemark: $0.placemark) } ?? []
 		results.isShowingHistory = false
 		results.tableView.reloadData()
@@ -368,12 +368,12 @@ extension LocationPickerViewController: MKMapViewDelegate {
 	
 	func selectLocationButton() -> UIButton {
 		let button = UIButton(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
-		button.setTitle(selectButtonTitle, for: UIControlState())
+		button.setTitle(selectButtonTitle, for: UIControl.State())
         if let titleLabel = button.titleLabel {
             let width = titleLabel.textRect(forBounds: CGRect(x: 0, y: 0, width: Int.max, height: 30), limitedToNumberOfLines: 1).width
             button.frame.size = CGSize(width: width, height: 30.0)
         }
-		button.setTitleColor(view.tintColor, for: UIControlState())
+		button.setTitleColor(view.tintColor, for: UIControl.State())
 		return button
 	}
 	
