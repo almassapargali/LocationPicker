@@ -10,6 +10,7 @@ Pod::Spec.new do |s|
   s.source_files = 'LocationPicker'
   s.resource = 'LocationPicker/Images.xcassets'
   s.platform = :ios
+  s.swift_version = '4.2'
   s.ios.deployment_target = '8.0'
   s.requires_arc = true
 end
