@@ -98,6 +98,7 @@ open class LocationPickerViewController: UIViewController {
 		let search = UISearchController(searchResultsController: self.results)
 		search.searchResultsUpdater = self
 		search.hidesNavigationBarDuringPresentation = false
+		search.searchBar.backgroundColor = self.navigationController?.navigationBar.barTintColor
 		return search
 	}()
 	
