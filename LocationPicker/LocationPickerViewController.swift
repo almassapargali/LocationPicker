@@ -44,18 +44,21 @@ open class LocationPickerViewController: UIViewController {
     /// default: "Select"
     public var selectButtonTitle = "Select"
 	
-	lazy public var currentLocationButtonBackground: UIColor = {
+	public lazy var currentLocationButtonBackground: UIColor = {
 		if let navigationBar = self.navigationController?.navigationBar,
 			let barTintColor = navigationBar.barTintColor {
 				return barTintColor
 		} else { return .white }
 	}()
     
-    /// default: .Minimal
+    /// default: .minimal
     public var searchBarStyle: UISearchBar.Style = .minimal
 
-	/// default: .Default
+	/// default: .default
 	public var statusBarStyle: UIStatusBarStyle = .default
+
+    @available(iOS 13.0, *)
+    public lazy var searchTextFieldColor: UIColor = .clear
 	
 	public var mapType: MKMapType = .hybrid {
 		didSet {
@@ -105,6 +108,9 @@ open class LocationPickerViewController: UIViewController {
 		let searchBar = self.searchController.searchBar
 		searchBar.searchBarStyle = self.searchBarStyle
 		searchBar.placeholder = self.searchBarPlaceholder
+        if #available(iOS 13.0, *) {
+            searchBar.searchTextField.backgroundColor = searchTextFieldColor
+        }
 		return searchBar
 	}()
 	
