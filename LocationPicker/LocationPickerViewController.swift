@@ -96,7 +96,7 @@ open class LocationPickerViewController: UIViewController {
 		results.searchHistoryLabel = self.searchHistoryLabel
 		return results
 	}()
-	
+
 	lazy var searchController: UISearchController = {
 		let search = UISearchController(searchResultsController: self.results)
 		search.searchResultsUpdater = self
@@ -118,8 +118,6 @@ open class LocationPickerViewController: UIViewController {
 		searchTimer?.invalidate()
 		localSearch?.cancel()
 		geocoder.cancelGeocode()
-        // http://stackoverflow.com/questions/32675001/uisearchcontroller-warning-attempting-to-load-the-view-of-a-view-controller/
-        let _ = searchController.view
 	}
 	
 	open override func loadView() {
@@ -166,6 +164,8 @@ open class LocationPickerViewController: UIViewController {
             navigationItem.searchController = searchController
         } else {
             navigationItem.titleView = searchBar
+            // http://stackoverflow.com/questions/32675001/uisearchcontroller-warning-attempting-to-load-the-view-of-a-view-controller/
+            _ = searchController.view
         }
 		definesPresentationContext = true
 		

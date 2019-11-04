@@ -42,8 +42,8 @@ locationPicker.location = initialLocation
 // button placed on right bottom corner
 locationPicker.showCurrentLocationButton = true // default: true
 
-// default: navigation bar's `barTintColor` or `.whiteColor()`
-locationPicker.currentLocationButtonBackground = .blueColor()
+// default: navigation bar's `barTintColor` or `UIColor.white`
+locationPicker.currentLocationButtonBackground = .blue
 
 // ignored if initial location is given, shows that location instead
 locationPicker.showCurrentLocationInitially = true // default: true
