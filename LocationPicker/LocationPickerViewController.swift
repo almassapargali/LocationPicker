@@ -44,18 +44,21 @@ open class LocationPickerViewController: UIViewController {
     /// default: "Select"
     public var selectButtonTitle = "Select"
 	
-	lazy public var currentLocationButtonBackground: UIColor = {
+	public lazy var currentLocationButtonBackground: UIColor = {
 		if let navigationBar = self.navigationController?.navigationBar,
 			let barTintColor = navigationBar.barTintColor {
 				return barTintColor
 		} else { return .white }
 	}()
     
-    /// default: .Minimal
+    /// default: .minimal
     public var searchBarStyle: UISearchBar.Style = .minimal
 
-	/// default: .Default
+	/// default: .default
 	public var statusBarStyle: UIStatusBarStyle = .default
+
+    @available(iOS 13.0, *)
+    public lazy var searchTextFieldColor: UIColor = .clear
 	
 	public var mapType: MKMapType = .hybrid {
 		didSet {
@@ -93,7 +96,7 @@ open class LocationPickerViewController: UIViewController {
 		results.searchHistoryLabel = self.searchHistoryLabel
 		return results
 	}()
-	
+
 	lazy var searchController: UISearchController = {
 		let search = UISearchController(searchResultsController: self.results)
 		search.searchResultsUpdater = self
@@ -105,6 +108,9 @@ open class LocationPickerViewController: UIViewController {
 		let searchBar = self.searchController.searchBar
 		searchBar.searchBarStyle = self.searchBarStyle
 		searchBar.placeholder = self.searchBarPlaceholder
+        if #available(iOS 13.0, *) {
+            searchBar.searchTextField.backgroundColor = searchTextFieldColor
+        }
 		return searchBar
 	}()
 	
@@ -112,8 +118,6 @@ open class LocationPickerViewController: UIViewController {
 		searchTimer?.invalidate()
 		localSearch?.cancel()
 		geocoder.cancelGeocode()
-        // http://stackoverflow.com/questions/32675001/uisearchcontroller-warning-attempting-to-load-the-view-of-a-view-controller/
-        let _ = searchController.view
 	}
 	
 	open override func loadView() {
@@ -137,6 +141,13 @@ open class LocationPickerViewController: UIViewController {
 	
 	open override func viewDidLoad() {
 		super.viewDidLoad()
+
+        if #available(iOS 13.0, *), let navigationController = navigationController {
+            let appearance = navigationController.navigationBar.standardAppearance
+            appearance.backgroundColor = navigationController.navigationBar.barTintColor
+            navigationItem.standardAppearance = appearance
+            navigationItem.scrollEdgeAppearance = appearance
+        }
 		
 		locationManager.delegate = self
 		mapView.delegate = self
@@ -153,6 +164,8 @@ open class LocationPickerViewController: UIViewController {
             navigationItem.searchController = searchController
         } else {
             navigationItem.titleView = searchBar
+            // http://stackoverflow.com/questions/32675001/uisearchcontroller-warning-attempting-to-load-the-view-of-a-view-controller/
+            _ = searchController.view
         }
 		definesPresentationContext = true
 		

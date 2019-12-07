@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'LocationPicker'
-  s.version  = '1.3.0'
+  s.version  = '1.4.2'
   s.author   = { 'Almas Sapargali' => 'almassapargali@gmail.com' }
   s.homepage = 'https://github.com/almassapargali/LocationPicker'
   s.description = "LocationPickerViewController is a UIViewController subclass to let users choose locations by searching or selecting on map. It's designed to work as UIImagePickerController."
@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.source_files = 'LocationPicker'
   s.resource = 'LocationPicker/Images.xcassets'
   s.platform = :ios
-  s.swift_version = '4.2'
+  s.swift_version = '5.0'
   s.ios.deployment_target = '8.0'
   s.requires_arc = true
 end
