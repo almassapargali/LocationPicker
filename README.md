@@ -35,9 +35,9 @@ Then provide completion block which will be called when user closes view control
 let locationPicker = LocationPickerViewController()
 
 // you can optionally set initial location
-let location = CLLocation(latitude: 35, longitude: 35)
-let initialLocation = Location(name: "My home", location: location)
-locationPicker.location = initialLocation
+let placemark = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 37.331686, longitude: -122.030656), addressDictionary: nil)
+let location = Location(name: "1 Infinite Loop, Cupertino", location: nil, placemark: placemark)
+locationPicker.location = location
 
 // button placed on right bottom corner
 locationPicker.showCurrentLocationButton = true // default: true
