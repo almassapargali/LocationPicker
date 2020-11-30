@@ -21,6 +21,12 @@ github "almassapargali/LocationPicker"
 pod 'LocationPicker'
 ```
 
+### Swift Package Manager
+
+[Swift Package Manager](https://swift.org/package-manager/) is a dependency manager built into Xcode. LocationPicker supports SPM from version 1.4.3.
+
+If you are using Xcode 11 or higher, go to `File` -> `Swift Packages` -> `Add Package Dependency` and enter the [package repository URL](https://github.com/almassapargali/LocationPicker.git), then follow the instructions.
+
 ## Screenshots
 | Map | Search | Select |
 |---|---|---|
