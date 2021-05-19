@@ -21,6 +21,8 @@ open class LocationPickerViewController: UIViewController {
     /// If this is true, the LocationPickerViewController will dismiss as soon as the user select a location from tableView search results. ie without showing the coordinates on a map.
     /// Default is false.
     public var dismissImmediatelyAfterTableViewSelection = false
+    
+    public var showCancelButtonOnNavBar = false
 	
 	// region distance to be used for creation region when user selects place from search results
 	public var resultRegionDistance: CLLocationDistance = 600
@@ -149,6 +151,7 @@ open class LocationPickerViewController: UIViewController {
 	
 	open override func viewDidLoad() {
 		super.viewDidLoad()
+        addCancelNavBarButtonIfNeeded()
 
         if #available(iOS 13.0, *), let navigationController = navigationController {
             let appearance = navigationController.navigationBar.standardAppearance
@@ -344,11 +347,13 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 	}
 	
 	func selectedLocation(_ location: Location) {
-        
-        if dismissImmediatelyAfterTableViewSelection {
-            updateCoordinatesAndDismissBothSearchResultsAndPicker(location)
-        } else {
-            dismissSearchResultsAndUpdateCoordinatesOnMap(location, completion: {})
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else {return}
+            if self.dismissImmediatelyAfterTableViewSelection {
+                self.updateCoordinatesAndDismissBothSearchResultsAndPicker(location)
+            } else {
+                self.dismissSearchResultsAndUpdateCoordinatesOnMap(location, completion: {})
+            }
         }
 	}
     
@@ -356,11 +361,7 @@ extension LocationPickerViewController: UISearchResultsUpdating {
         dismissSearchResultsAndUpdateCoordinatesOnMap(location,completion: {
             self.completion?(location)
             // Dismiss picker.
-            if let navigation = self.navigationController, navigation.viewControllers.count > 1 {
-                navigation.popViewController(animated: true)
-            } else {
-                self.presentingViewController?.dismiss(animated: true, completion: nil)
-            }
+            self.dismissOrPopSelf()
         })
     }
     private func dismissSearchResultsAndUpdateCoordinatesOnMap(_ location: Location,completion:@escaping() -> Void){
@@ -374,6 +375,26 @@ extension LocationPickerViewController: UISearchResultsUpdating {
             completion()
         }
         
+    }
+    
+    private func addCancelNavBarButtonIfNeeded(){
+        if self.showCancelButtonOnNavBar {
+            let cancelNavBarButton  = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissOrPopSelf))
+            navigationItem.rightBarButtonItem = cancelNavBarButton
+            
+        }
+    }
+    
+    @objc private func dismissOrPopSelf(){
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else {return}
+            if let navigation = self.navigationController, navigation.viewControllers.count > 1 {
+                navigation.popViewController(animated: true)
+            } else {
+                self.presentingViewController?.dismiss(animated: true, completion: nil)
+            }
+            
+        }
     }
 }
 
