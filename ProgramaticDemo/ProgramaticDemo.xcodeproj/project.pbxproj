@@ -13,18 +13,18 @@
 		6306A4B32654C1AB00F81918 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6306A4B12654C1AB00F81918 /* Main.storyboard */; };
 		6306A4B52654C1AC00F81918 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6306A4B42654C1AC00F81918 /* Assets.xcassets */; };
 		6306A4B82654C1AC00F81918 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6306A4B62654C1AC00F81918 /* LaunchScreen.storyboard */; };
-		6306A4C12654C1E800F81918 /* LocationPicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6306A4C02654C1E800F81918 /* LocationPicker.framework */; };
-		6306A4C22654C1E800F81918 /* LocationPicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6306A4C02654C1E800F81918 /* LocationPicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6306A4C7265530EC00F81918 /* LocationPicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6306A4C6265530EC00F81918 /* LocationPicker.framework */; };
+		6306A4C8265530EC00F81918 /* LocationPicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6306A4C6265530EC00F81918 /* LocationPicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		6306A4C32654C1E800F81918 /* Embed Frameworks */ = {
+		6306A4C9265530EC00F81918 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6306A4C22654C1E800F81918 /* LocationPicker.framework in Embed Frameworks */,
+				6306A4C8265530EC00F81918 /* LocationPicker.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -41,6 +41,7 @@
 		6306A4B72654C1AC00F81918 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6306A4B92654C1AC00F81918 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6306A4C02654C1E800F81918 /* LocationPicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = LocationPicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6306A4C6265530EC00F81918 /* LocationPicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = LocationPicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,7 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6306A4C12654C1E800F81918 /* LocationPicker.framework in Frameworks */,
+				6306A4C7265530EC00F81918 /* LocationPicker.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,6 +90,7 @@
 		6306A4BF2654C1E800F81918 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6306A4C6265530EC00F81918 /* LocationPicker.framework */,
 				6306A4C02654C1E800F81918 /* LocationPicker.framework */,
 			);
 			name = Frameworks;
@@ -104,7 +106,7 @@
 				6306A4A42654C1AB00F81918 /* Sources */,
 				6306A4A52654C1AB00F81918 /* Frameworks */,
 				6306A4A62654C1AB00F81918 /* Resources */,
-				6306A4C32654C1E800F81918 /* Embed Frameworks */,
+				6306A4C9265530EC00F81918 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

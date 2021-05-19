@@ -100,6 +100,7 @@ class ViewController: UIViewController {
         }
         
         // Custominizations
+        locationPicker.dismissImmediatelyAfterTableViewSelection = true
         locationPicker.showCurrentLocationButton = true
         locationPicker.currentLocationButtonBackground = UIColor.orange
         locationPicker.showCurrentLocationInitially = true
