@@ -17,6 +17,10 @@ open class LocationPickerViewController: UIViewController {
 	}
 	
 	public var completion: ((Location?) -> ())?
+    
+    /// If this is true, the LocationPickerViewController will dismiss as soon as the user select a location from tableView search results. ie without showing the coordinates on a map.
+    /// Default is false.
+    public var dismissImmediatelyAfterTableViewSelection = false
 	
 	// region distance to be used for creation region when user selects place from search results
 	public var resultRegionDistance: CLLocationDistance = 600
@@ -340,15 +344,37 @@ extension LocationPickerViewController: UISearchResultsUpdating {
 	}
 	
 	func selectedLocation(_ location: Location) {
-		// dismiss search results
-		dismiss(animated: true) {
-			// set location, this also adds annotation
-			self.location = location
-			self.showCoordinates(location.coordinate)
-			
-			self.historyManager.addToHistory(location)
-		}
+        
+        if dismissImmediatelyAfterTableViewSelection {
+            updateCoordinatesAndDismissBothSearchResultsAndPicker(location)
+        } else {
+            dismissSearchResultsAndUpdateCoordinatesOnMap(location, completion: {})
+        }
 	}
+    
+    private func updateCoordinatesAndDismissBothSearchResultsAndPicker(_ location: Location) {
+        dismissSearchResultsAndUpdateCoordinatesOnMap(location,completion: {
+            self.completion?(location)
+            // Dismiss picker.
+            if let navigation = self.navigationController, navigation.viewControllers.count > 1 {
+                navigation.popViewController(animated: true)
+            } else {
+                self.presentingViewController?.dismiss(animated: true, completion: nil)
+            }
+        })
+    }
+    private func dismissSearchResultsAndUpdateCoordinatesOnMap(_ location: Location,completion:@escaping() -> Void){
+        // dismiss search results
+        dismiss(animated: true) {
+            // set location, this also adds annotation
+            self.location = location
+            self.showCoordinates(location.coordinate)
+            
+            self.historyManager.addToHistory(location)
+            completion()
+        }
+        
+    }
 }
 
 // MARK: Selecting location with gesture
