@@ -22,7 +22,8 @@ open class LocationPickerViewController: UIViewController {
     /// Default is false.
     public var dismissImmediatelyAfterTableViewSelection = false
     
-    public var showCancelButtonOnNavBar = false
+    /// If this is true, a close/Done button will be shown on the top right corner of the navigationBar. When a button is tapped it will simply dismiss the picker without passing any data.
+    public var showCloseButtonOnNavBar = false
 	
 	// region distance to be used for creation region when user selects place from search results
 	public var resultRegionDistance: CLLocationDistance = 600
@@ -378,9 +379,17 @@ extension LocationPickerViewController: UISearchResultsUpdating {
     }
     
     private func addCancelNavBarButtonIfNeeded(){
-        if self.showCancelButtonOnNavBar {
-            let cancelNavBarButton  = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissOrPopSelf))
-            navigationItem.rightBarButtonItem = cancelNavBarButton
+        
+        var closeButton:UIBarButtonItem!
+        
+        if self.showCloseButtonOnNavBar {
+            if #available(iOS 13.0, *) {
+                closeButton  = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(dismissOrPopSelf))
+            } else {
+                // Fallback on earlier versions
+                closeButton  = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissOrPopSelf))
+            }
+            navigationItem.rightBarButtonItem = closeButton
             
         }
     }
