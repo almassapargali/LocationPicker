@@ -13,6 +13,8 @@
 		6306A4B32654C1AB00F81918 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6306A4B12654C1AB00F81918 /* Main.storyboard */; };
 		6306A4B52654C1AC00F81918 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6306A4B42654C1AC00F81918 /* Assets.xcassets */; };
 		6306A4B82654C1AC00F81918 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6306A4B62654C1AC00F81918 /* LaunchScreen.storyboard */; };
+		6306A4E226555AA900F81918 /* LocationPicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6306A4E126555AA900F81918 /* LocationPicker.framework */; };
+		6306A4E326555AA900F81918 /* LocationPicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6306A4E126555AA900F81918 /* LocationPicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -22,6 +24,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				6306A4E326555AA900F81918 /* LocationPicker.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -37,6 +40,7 @@
 		6306A4B42654C1AC00F81918 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6306A4B72654C1AC00F81918 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6306A4B92654C1AC00F81918 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6306A4E126555AA900F81918 /* LocationPicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = LocationPicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6306A4E226555AA900F81918 /* LocationPicker.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,7 +60,7 @@
 			children = (
 				6306A4AA2654C1AB00F81918 /* ProgramaticDemo */,
 				6306A4A92654C1AB00F81918 /* Products */,
-				6306A4DC2655382600F81918 /* Frameworks */,
+				6306A4E026555AA900F81918 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -81,9 +86,10 @@
 			path = ProgramaticDemo;
 			sourceTree = "<group>";
 		};
-		6306A4DC2655382600F81918 /* Frameworks */ = {
+		6306A4E026555AA900F81918 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6306A4E126555AA900F81918 /* LocationPicker.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

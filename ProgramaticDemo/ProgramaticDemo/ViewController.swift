@@ -101,7 +101,7 @@ class ViewController: UIViewController {
         
         // Custominizations
         locationPicker.dismissImmediatelyAfterTableViewSelection = true
-        locationPicker.showCancelButtonOnNavBar = true
+        locationPicker.showCloseButtonOnNavBar = true
         locationPicker.showCurrentLocationButton = true
         locationPicker.currentLocationButtonBackground = UIColor.white.withAlphaComponent(0.5)
         locationPicker.showCurrentLocationInitially = true
@@ -141,7 +141,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "Programtic sample"
+        navigationItem.title = "Programatic sample"
         autoLayout()
         addGestureRecognizers()
         
