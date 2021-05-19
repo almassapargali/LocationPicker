@@ -101,8 +101,9 @@ class ViewController: UIViewController {
         
         // Custominizations
         locationPicker.dismissImmediatelyAfterTableViewSelection = true
+        locationPicker.showCancelButtonOnNavBar = true
         locationPicker.showCurrentLocationButton = true
-        locationPicker.currentLocationButtonBackground = UIColor.orange
+        locationPicker.currentLocationButtonBackground = UIColor.white.withAlphaComponent(0.5)
         locationPicker.showCurrentLocationInitially = true
         locationPicker.mapType = .standard
         locationPicker.useCurrentLocationAsHint = true
