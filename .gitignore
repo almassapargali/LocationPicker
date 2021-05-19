@@ -12,4 +12,6 @@ build/*
 !default.xcworkspace
 xcuserdata
 profile
+.DS_Store
+**/.DS_Store
 
