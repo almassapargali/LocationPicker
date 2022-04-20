@@ -181,7 +181,12 @@ open class LocationPickerViewController: UIViewController {
 			getCurrentLocation()
 		}
 	}
-
+    
+    open override func viewWillDisappear(_ animated: Bool) {
+        // Resign first responder to avoid the search bar disappearing issue
+        searchController.isActive = false
+    }
+    
 	open override var preferredStatusBarStyle : UIStatusBarStyle {
 		return statusBarStyle
 	}
