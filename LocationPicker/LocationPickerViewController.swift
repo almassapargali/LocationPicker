@@ -57,7 +57,7 @@ open class LocationPickerViewController: UIViewController {
 	/// default: .default
 	public var statusBarStyle: UIStatusBarStyle = .default
 
-    @available(iOS 13.0, *)
+    //@available(iOS 13.0, *)
     public lazy var searchTextFieldColor: UIColor = .clear
 	
 	public var mapType: MKMapType = .hybrid {
