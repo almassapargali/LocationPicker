@@ -378,7 +378,7 @@ extension LocationPickerViewController: MKMapViewDelegate {
 		if annotation is MKUserLocation { return nil }
 		
 		let pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "annotation")
-		  if #available(iOS 9.0, *) {
+        if #available(iOS 9.0, *) {
             pin.pinTintColor = .green
         } else {
             pin.pinColor = .green
